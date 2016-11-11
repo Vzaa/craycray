@@ -1,0 +1,8 @@
+[package]
+name = "craycray"
+version = "0.1.0"
+authors = ["Vzaa <Vzaa@users.noreply.github.com>"]
+
+[dependencies]
+sdl2 = "0.25.0"
+vecmath = "0.2.0"

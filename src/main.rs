@@ -54,12 +54,13 @@ fn test_scene() -> Scene {
     use light::Light;
     use vec3d::Vec3d;
     use sphere::Sphere;
+    use plane::Plane;
 
-    let camera_pos: Vec3d = [0.0, 0.0, -10.0];
+    let camera_pos: Vec3d = [0.0, 0.0, -100.0];
 
     let camera_dir: Vec3d = [0.0, 0.0, 1.0];
     let camera_up: Vec3d = [0.0, 1.0, 0.0];
-    let light_pos: Vec3d = [5.0, 5.0, 0.0];
+    let light_pos: Vec3d = [50.0, 5.0, -100.0];
 
     let light = Light::new(light_pos, color::Color(0.6, 0.6, 0.6));
     let mut scene = Scene::new(light, camera_pos, camera_dir, camera_up);
@@ -69,8 +70,15 @@ fn test_scene() -> Scene {
     scene.add_shape(Box::new(Sphere::new([0.0, -120.0, 55.0], 100.0, color::WHITE)));
     scene.add_shape(Box::new(Sphere::new([0.0, 120.0, 55.0], 100.0, color::Color(1.0, 1.0, 0.0))));
     scene.add_shape(Box::new(Sphere::new([0.0, 0.0, 200.0], 100.0, color::Color(1.0, 0.5, 1.0))));
-    scene.add_shape(Box::new(Sphere::new([15.0, 0.0, 40.0], 5.0, color::Color(0.0, 0.0, 0.0))));
+    scene.add_shape(Box::new(Sphere::from_material([15.0, 0.0, 40.0], 5.0, material::MIRROR)));
     scene.add_shape(Box::new(Sphere::new([-45.0, 0.0, 45.0], 20.0, color::Color(0.1, 0.1, 0.1))));
+
+    scene.add_shape(Box::new(Plane::new([0.0, -200.0, 0.0], [0.0, 1.0, 0.0], color::Color(0.4, 0.4, 0.4))));
+    scene.add_shape(Box::new(Plane::new([0.0, 200.0, 0.0], [0.0, -1.0, 0.0], color::Color(0.4, 0.4, 0.4))));
+    scene.add_shape(Box::new(Plane::from_material([200.0, 0.0, 0.0], [-1.0, 0.0, 0.0], material::MIRROR)));
+    scene.add_shape(Box::new(Plane::new([-200.0, 0.0, 0.0], [1.0, 0.0, 0.0], color::Color(0.8, 0.4, 0.8))));
+    scene.add_shape(Box::new(Plane::new([0.0, 0.0, 200.0], [0.0, 0.0, -1.0], color::Color(0.4, 0.4, 0.4))));
+    scene.add_shape(Box::new(Plane::new([0.0, 0.0, -200.0], [0.0, 0.0, 1.0], color::Color(0.4, 0.4, 0.4))));
     scene
 }
 

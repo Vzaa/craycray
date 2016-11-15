@@ -1,21 +1,11 @@
 #[derive(Copy, Clone)]
 pub struct Color(pub f64, pub f64, pub f64);
 
-#[derive(Copy, Clone)]
-pub struct Material {
-    pub ambient_color: Color,
-    pub specular_color: Color,
-    pub diffuse_color: Color,
-    pub shininess: f64,
-    pub reflectivity: f64,
-}
-
 pub const RED: Color = Color(1.0, 0.0, 0.0);
 pub const GREEN: Color = Color(0.0, 1.0, 0.0);
 pub const BLUE: Color = Color(0.0, 0.0, 1.0);
 pub const WHITE: Color = Color(1.0, 1.0, 1.0);
 pub const BLACK: Color = Color(0.0, 0.0, 0.0);
-
 
 impl Color {
     pub fn add(a: &Color, b: &Color) -> Color {
@@ -36,6 +26,10 @@ impl Color {
         }
 
         Color(r_sum, g_sum, b_sum)
+    }
+
+    pub fn intensity(&self) -> f64 {
+        (self.0 + self.1 + self.2) / 3.0
     }
 
     pub fn scale(a: &Color, b: f64) -> Color {

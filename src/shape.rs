@@ -1,5 +1,6 @@
 use vec3d::*;
 use color::*;
+use material::*;
 
 pub struct Intersection {
     pub material: Material, // This could be a reference?

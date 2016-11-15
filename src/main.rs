@@ -4,6 +4,7 @@ extern crate vecmath;
 mod vec3d;
 mod light;
 mod scene;
+mod material;
 mod color;
 mod shape;
 mod sphere;

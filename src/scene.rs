@@ -4,6 +4,7 @@ use shape::*;
 use vec3d::*;
 use light::*;
 use color::*;
+use material::*;
 
 use std;
 
@@ -33,7 +34,7 @@ impl Scene {
     }
 
     pub fn step(&mut self) {
-         self.light.translate(&[1.0, 0.0, 0.0]);
+        //self.light.translate(&[1.0, 0.0, 0.0]);
     }
 
     pub fn mv_camera_fwd(&mut self) {

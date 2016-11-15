@@ -1,6 +1,7 @@
 use vecmath::*;
 use vec3d::*;
 use color::*;
+use material::*;
 use shape::*;
 
 // TODO: This is incomplete
@@ -15,10 +16,10 @@ impl Plane {
     pub fn new(point: Vec3d, normal: Vec3d, c: Color) -> Plane {
         let material = Material {
             diffuse_color: c,
-            ambient_color: Color::scale(&c, 0.2),
+            ambient_color: BLACK,
             specular_color: WHITE,
             shininess: 15.0,
-            reflectivity: 0.5,
+            reflectivity: 0.3,
         };
         Plane {
             point: point,
@@ -27,7 +28,7 @@ impl Plane {
         }
     }
 
-    pub fn new_material(point: Vec3d, normal: Vec3d, material: Material) -> Plane {
+    pub fn from_material(point: Vec3d, normal: Vec3d, material: Material) -> Plane {
         Plane {
             point: point,
             normal: vec3_normalized(normal),

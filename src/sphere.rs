@@ -2,6 +2,7 @@ use vecmath::*;
 use vec3d::*;
 use color::*;
 use shape::*;
+use material::*;
 
 pub struct Sphere {
     center: Vec3d,
@@ -16,7 +17,7 @@ impl Sphere {
             ambient_color: BLACK,
             specular_color: WHITE,
             shininess: 15.0,
-            reflectivity: 0.5,
+            reflectivity: 0.3,
         };
         Sphere {
             center: center,
@@ -25,7 +26,7 @@ impl Sphere {
         }
     }
 
-    pub fn new_material(c: Vec3d, radius: f64, m: Material) -> Sphere {
+    pub fn from_material(c: Vec3d, radius: f64, m: Material) -> Sphere {
         Sphere {
             center: c,
             radius: radius,

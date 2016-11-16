@@ -6,3 +6,4 @@ authors = ["Vzaa <Vzaa@users.noreply.github.com>"]
 [dependencies]
 sdl2 = "0.25.0"
 vecmath = "0.2.0"
+crossbeam = "0.2.10"

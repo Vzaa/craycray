@@ -1,5 +1,4 @@
 use vec3d::*;
-use color::*;
 use material::*;
 
 pub struct Intersection {

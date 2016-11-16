@@ -1,5 +1,6 @@
 extern crate sdl2;
 extern crate vecmath;
+extern crate crossbeam;
 
 mod vec3d;
 mod light;
@@ -86,6 +87,7 @@ fn test_scene() -> Scene {
 fn main() {
     let resolution: u32 = 512;
     let mut scene = test_scene();
+    let thread_cnt = 4;
 
     // Stuff from sdl2-rust example
     let sdl_context = sdl2::init().unwrap();
@@ -117,19 +119,40 @@ fn main() {
         texture.with_lock(None, |buffer: &mut [u8], pitch: usize| {
                 let sc = &scene;
                 let res_u = resolution as usize;
-                for y in 0..res_u {
-                    let line_start = y * pitch;
-                    let line_end = line_start + res_u * 3;
+                for y in (0..(res_u / thread_cnt) + 1).map(|x| x * thread_cnt) {
+                    let threads = if y + thread_cnt <= res_u {
+                        thread_cnt
+                    } else {
+                        res_u % thread_cnt
+                    };
 
-                    let line_buf = &mut buffer[line_start..line_end];
-                    // thread::spawn(move || {
-                    let line_iter = sc.line_iter_u8(res_u, res_u, y);
-                    for (c, offset) in line_iter.zip((0..).map(|x| 3 * x)) {
-                        line_buf[offset + 0] = c.0;
-                        line_buf[offset + 1] = c.1;
-                        line_buf[offset + 2] = c.2;
+                    if threads == 0 {
+                        break;
                     }
-                    // }).join().unwrap();
+
+                    let mut lines : Vec<Vec<(u8, u8, u8)>> = Vec::new();
+                    for _ in (0..threads) {
+                        lines.push(Vec::new());
+                    }
+
+                    crossbeam::scope(|scope| {
+                        for (thread_num, vec) in lines.iter_mut().enumerate() {
+                            scope.spawn(move || {
+                                sc.line_iter_u8(res_u, res_u, y + thread_num).fold((), |(), x| vec.push(x));
+                            });
+                        }
+                    });
+
+                    for (thread_num, vec) in lines.iter_mut().enumerate() {
+                        let line_start = (thread_num + y) * pitch;
+                        let line_end = line_start + res_u * 3;
+                        let line_buf = &mut buffer[line_start..line_end];
+                        for (c, offset) in vec.iter().zip((0..).map(|x| 3 * x)) {
+                            line_buf[offset + 0] = c.0;
+                            line_buf[offset + 1] = c.1;
+                            line_buf[offset + 2] = c.2;
+                        }
+                    }
                 }
             })
             .unwrap();

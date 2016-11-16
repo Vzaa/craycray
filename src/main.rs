@@ -107,6 +107,11 @@ fn main() {
 
     let mut event_pump = sdl_context.event_pump().unwrap();
 
+    let mut lines : Vec<Vec<(u8, u8, u8)>> = Vec::new();
+    for _ in (0..thread_cnt) {
+        lines.push(Vec::with_capacity(resolution as usize));
+    }
+
     loop {
         let (_, x, y) = sdl_context.mouse().mouse_state();
         let quit = handle_events(&mut scene, resolution, &mut event_pump, x, y);
@@ -130,20 +135,16 @@ fn main() {
                         break;
                     }
 
-                    let mut lines : Vec<Vec<(u8, u8, u8)>> = Vec::new();
-                    for _ in (0..threads) {
-                        lines.push(Vec::new());
-                    }
-
                     crossbeam::scope(|scope| {
-                        for (thread_num, vec) in lines.iter_mut().enumerate() {
+                        for (thread_num, vec) in lines[0..threads].iter_mut().enumerate() {
                             scope.spawn(move || {
+                                vec.drain(..);
                                 sc.line_iter_u8(res_u, res_u, y + thread_num).fold((), |(), x| vec.push(x));
                             });
                         }
                     });
 
-                    for (thread_num, vec) in lines.iter_mut().enumerate() {
+                    for (thread_num, vec) in lines[0..threads].iter_mut().enumerate() {
                         let line_start = (thread_num + y) * pitch;
                         let line_end = line_start + res_u * 3;
                         let line_buf = &mut buffer[line_start..line_end];

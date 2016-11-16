@@ -18,7 +18,7 @@ use sdl2::rect::Rect;
 use sdl2::EventPump;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
-use std::thread;
+use std::time::Instant;
 
 use rayon::prelude::*;
 
@@ -114,11 +114,21 @@ fn main() {
         lines.push((line_no, Vec::with_capacity(res_u)));
     }
 
+    let mut frame_cnt = 0;
+    let mut time_stamp = Instant::now();
     loop {
         let (_, x, y) = sdl_context.mouse().mouse_state();
         let quit = handle_events(&mut scene, resolution, &mut event_pump, x, y);
         if quit {
             break;
+        }
+
+        if frame_cnt == 10 {
+            let elapsed = time_stamp.elapsed();
+            let msecs = (elapsed.as_secs() * 1000) as u64 + (elapsed.subsec_nanos() as u64 / 1000000);
+            time_stamp = Instant::now();
+            println!("FPS {}", (frame_cnt as f32) / (msecs as f32 / 1000.0));
+            frame_cnt = 0;
         }
 
         scene.step();
@@ -148,5 +158,6 @@ fn main() {
                   Some(Rect::new(0, 0, resolution, resolution)))
             .unwrap();
         renderer.present();
+        frame_cnt += 1;
     }
 }

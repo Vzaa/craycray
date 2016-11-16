@@ -4,7 +4,6 @@ use shape::*;
 use vec3d::*;
 use light::*;
 use color::*;
-use material::*;
 
 use std;
 

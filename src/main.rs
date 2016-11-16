@@ -1,6 +1,6 @@
 extern crate sdl2;
 extern crate vecmath;
-extern crate crossbeam;
+extern crate rayon;
 
 mod vec3d;
 mod light;
@@ -19,6 +19,8 @@ use sdl2::EventPump;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use std::thread;
+
+use rayon::prelude::*;
 
 // Return true for quit
 fn handle_events(scene: &mut Scene,
@@ -86,8 +88,8 @@ fn test_scene() -> Scene {
 // A simple test code that uses SDL for rendering
 fn main() {
     let resolution: u32 = 512;
+    let res_u = resolution as usize;
     let mut scene = test_scene();
-    let thread_cnt = 4;
 
     // Stuff from sdl2-rust example
     let sdl_context = sdl2::init().unwrap();
@@ -107,9 +109,9 @@ fn main() {
 
     let mut event_pump = sdl_context.event_pump().unwrap();
 
-    let mut lines : Vec<Vec<(u8, u8, u8)>> = Vec::new();
-    for _ in (0..thread_cnt) {
-        lines.push(Vec::with_capacity(resolution as usize));
+    let mut lines: Vec<(usize, Vec<(u8, u8, u8)>)> = Vec::new();
+    for line_no in 0..res_u {
+        lines.push((line_no, Vec::with_capacity(res_u)));
     }
 
     loop {
@@ -121,42 +123,25 @@ fn main() {
 
         scene.step();
 
+        lines.par_iter_mut().for_each(|tup| {
+            let (line_no, ref mut vec) = *tup;
+            vec.drain(..);
+            scene.line_iter_u8(res_u, res_u, line_no).fold((), |(), x| vec.push(x));
+        });
+
         texture.with_lock(None, |buffer: &mut [u8], pitch: usize| {
-                let sc = &scene;
-                let res_u = resolution as usize;
-                for y in (0..(res_u / thread_cnt) + 1).map(|x| x * thread_cnt) {
-                    let threads = if y + thread_cnt <= res_u {
-                        thread_cnt
-                    } else {
-                        res_u % thread_cnt
-                    };
-
-                    if threads == 0 {
-                        break;
-                    }
-
-                    crossbeam::scope(|scope| {
-                        for (thread_num, vec) in lines[0..threads].iter_mut().enumerate() {
-                            scope.spawn(move || {
-                                vec.drain(..);
-                                sc.line_iter_u8(res_u, res_u, y + thread_num).fold((), |(), x| vec.push(x));
-                            });
-                        }
-                    });
-
-                    for (thread_num, vec) in lines[0..threads].iter_mut().enumerate() {
-                        let line_start = (thread_num + y) * pitch;
-                        let line_end = line_start + res_u * 3;
-                        let line_buf = &mut buffer[line_start..line_end];
-                        for (c, offset) in vec.iter().zip((0..).map(|x| 3 * x)) {
-                            line_buf[offset + 0] = c.0;
-                            line_buf[offset + 1] = c.1;
-                            line_buf[offset + 2] = c.2;
-                        }
+                for tup in lines.iter() {
+                    let (line_no, ref vec) = *tup;
+                    let line_start = line_no * pitch;
+                    let line_end = line_start + res_u * 3;
+                    let line_buf = &mut buffer[line_start..line_end];
+                    for (c, offset) in vec.iter().zip((0..).map(|x| 3 * x)) {
+                        line_buf[offset + 0] = c.0;
+                        line_buf[offset + 1] = c.1;
+                        line_buf[offset + 2] = c.2;
                     }
                 }
-            })
-            .unwrap();
+            }).unwrap();
         renderer.clear();
         renderer.copy(&texture,
                   None,

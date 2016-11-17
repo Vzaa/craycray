@@ -79,33 +79,33 @@ impl Scene {
     }
 
     // Recursively trace lines
-    fn trace(&self, point: &Vec3d, dir: &Vec3d, step: i32) -> Color {
-        if step < self.max_reflection {
-            let intersect_res = self.closest_q(point, dir);
-            if let Some(intersect) = intersect_res {
-                let feeler_d = vec3_sub(*self.light.get_pos(), intersect.point);
-                let dist_light = vec3_len(feeler_d);
-                let feeler_d_unit = vec3_normalized(feeler_d);
-                let direct_light =
-                    self.is_direct_light(&intersect.point, &feeler_d_unit, dist_light);
-
-                let local = phong(point, &intersect, &self.light, direct_light);
-
-                let tmp = vec3_normalized_sub(intersect.point, *point);
-                let reflection_dir =
-                    vec3_normalized_sub(tmp,
-                                        vec3_scale(intersect.normal,
-                                                   2.0 * vec3_dot(tmp, intersect.normal)));
-
-                let reflected = self.trace(&intersect.point, &reflection_dir, step + 1);
-
-                return Color::add(&local,
-                                  &(Color::scale(&reflected, intersect.material.reflectivity)));
-            } else {
-                return BLACK;
-            }
+    fn trace(&self, point: &Vec3d, dir: &Vec3d, depth: i32) -> Color {
+        if depth >= self.max_reflection {
+            return BLACK;
         }
-        BLACK
+
+        let intersect_res = self.closest_q(point, dir);
+        if let Some(intersect) = intersect_res {
+            let feeler_d = vec3_sub(*self.light.get_pos(), intersect.point);
+            let dist_light = vec3_len(feeler_d);
+            let feeler_d_unit = vec3_normalized(feeler_d);
+            let direct_light =
+                self.is_direct_light(&intersect.point, &feeler_d_unit, dist_light);
+
+            let local = phong(point, &intersect, &self.light, direct_light);
+
+            let tmp = vec3_normalized_sub(intersect.point, *point);
+            let reflection_dir =
+                vec3_normalized_sub(tmp,
+                                    vec3_scale(intersect.normal,
+                                               2.0 * vec3_dot(tmp, intersect.normal)));
+
+            let reflected = self.trace(&intersect.point, &reflection_dir, depth + 1);
+
+            Color::add(&local, &(Color::scale(&reflected, intersect.material.reflectivity)))
+        } else {
+            BLACK
+        }
     }
 
     // Is there anything on the path to the light

@@ -97,7 +97,6 @@ fn main() {
 
     let window = video_subsystem.window("Ray", resolution, resolution)
         .position_centered()
-        .opengl()
         .build()
         .unwrap();
 

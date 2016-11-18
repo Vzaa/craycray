@@ -135,8 +135,8 @@ fn main() {
 
         lines.par_iter_mut().for_each(|tup| {
             let (line_no, ref mut vec) = *tup;
-            vec.drain(..);
-            scene.line_iter_u8(res_u, res_u, line_no).fold((), |(), x| vec.push(x));
+            vec.clear();
+            vec.extend(scene.line_iter_u8(res_u, res_u, line_no));
         });
 
         texture.with_lock(None, |buffer: &mut [u8], pitch: usize| {

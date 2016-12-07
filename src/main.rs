@@ -43,11 +43,8 @@ fn handle_events(scene: &mut Scene,
         }
     }
 
-    // TODO: Y rotation is incorrect
-    let x_dist = ((resolution as i32) / 2) - x;
-    let y_dist = ((resolution as i32) / 2) - y;
-    let x_rot = x_dist as f64 * (-0.001);
-    let y_rot = y_dist as f64 * (-0.001);
+    let x_rot = x as f64 * (0.010);
+    let y_rot = y as f64 * (0.010);
     scene.rot_camera(x_rot, y_rot);
     false
 }
@@ -106,6 +103,8 @@ fn main() {
     let mut texture =
         renderer.create_texture_streaming(PixelFormatEnum::RGB24, resolution, resolution)
             .unwrap();
+    sdl_context.mouse().show_cursor(false);
+    sdl_context.mouse().set_relative_mouse_mode(true);
 
     let mut event_pump = sdl_context.event_pump().unwrap();
 
@@ -117,7 +116,7 @@ fn main() {
     let mut frame_cnt = 0;
     let mut time_stamp = Instant::now();
     loop {
-        let (_, x, y) = sdl_context.mouse().mouse_state();
+        let (_, x, y) = sdl_context.mouse().relative_mouse_state();
         let quit = handle_events(&mut scene, resolution, &mut event_pump, x, y);
         if quit {
             break;

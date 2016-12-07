@@ -45,8 +45,23 @@ impl Scene {
     }
 
     pub fn rot_camera(&mut self, x_rot: f64, y_rot: f64) {
-        self.camera_dir = vec3_rotx(self.camera_dir, y_rot);
         self.camera_dir = vec3_roty(self.camera_dir, x_rot);
+
+        // project camera_dir to X plane
+        let mut x_proj = self.camera_dir.clone();
+        x_proj[1] = 0.0;
+        x_proj = vec3_normalized(x_proj);
+
+        let angle = if x_proj[0] < 0.0 {
+            -vec3_dot([0.0, 0.0, 1.0], x_proj).acos()
+        } else {
+            vec3_dot([0.0, 0.0, 1.0], x_proj).acos()
+        };
+
+        self.camera_dir = vec3_roty(self.camera_dir, -angle);
+        self.camera_dir = vec3_rotx(self.camera_dir, y_rot);
+        self.camera_dir = vec3_roty(self.camera_dir, angle);
+
         self.camera_dir = vec3_normalized(self.camera_dir);
     }
 

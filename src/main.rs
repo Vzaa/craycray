@@ -24,7 +24,6 @@ use rayon::prelude::*;
 
 // Return true for quit
 fn handle_events(scene: &mut Scene,
-                 resolution: u32,
                  event_pump: &mut EventPump,
                  x: i32,
                  y: i32)
@@ -117,7 +116,7 @@ fn main() {
     let mut time_stamp = Instant::now();
     loop {
         let (_, x, y) = sdl_context.mouse().relative_mouse_state();
-        let quit = handle_events(&mut scene, resolution, &mut event_pump, x, y);
+        let quit = handle_events(&mut scene, &mut event_pump, x, y);
         if quit {
             break;
         }
@@ -139,13 +138,13 @@ fn main() {
         });
 
         texture.with_lock(None, |buffer: &mut [u8], pitch: usize| {
-                for tup in lines.iter() {
+                for tup in &lines {
                     let (line_no, ref vec) = *tup;
                     let line_start = line_no * pitch;
                     let line_end = line_start + res_u * 3;
                     let line_buf = &mut buffer[line_start..line_end];
                     for (c, offset) in vec.iter().zip((0..).map(|x| 3 * x)) {
-                        line_buf[offset + 0] = c.0;
+                        line_buf[offset] = c.0;
                         line_buf[offset + 1] = c.1;
                         line_buf[offset + 2] = c.2;
                     }

@@ -48,7 +48,7 @@ impl Scene {
         self.camera_dir = vec3_roty(self.camera_dir, x_rot);
 
         // project camera_dir to X plane
-        let mut x_proj = self.camera_dir.clone();
+        let mut x_proj = self.camera_dir;
         x_proj[1] = 0.0;
         x_proj = vec3_normalized(x_proj);
 
@@ -68,7 +68,7 @@ impl Scene {
 
     /// Returns an iterator that scans a full frame at given resolution
     pub fn draw_iter(&self, h: usize, v: usize) -> DrawIter {
-        DrawIter::new(&self, h, v)
+        DrawIter::new(self, h, v)
     }
 
     /// draw_iter converted to (u8, u8, u8)
@@ -81,7 +81,7 @@ impl Scene {
 
     /// Returns an iterator for a line at given resolution
     pub fn line_iter(&self, h: usize, v: usize, l: usize) -> LineIter {
-        LineIter::new(&self, h, v, l)
+        LineIter::new(self, h, v, l)
     }
 
     /// line_iter converted to (u8, u8, u8)
@@ -152,7 +152,7 @@ impl Scene {
 
         // get intersection point info
         if let Some((_, shape)) = closest {
-            shape.intersect(&point, &dir)
+            shape.intersect(point, dir)
         } else {
             None
         }

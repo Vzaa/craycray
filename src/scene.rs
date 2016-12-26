@@ -138,21 +138,21 @@ impl Scene {
 
         let closest = self.shapes
             .iter()
-            .map(|&ref x| x.intersect_dist(point, &unitd))
-            .zip(&self.shapes)
-            .fold(None, |min, (dist_op, shape)| {
-                match (dist_op, min) {
-                    (Some(dist_val), Some((dist_min, _))) if dist_val < dist_min => {
-                        Some((dist_val, shape))
+            .map(|x| x.intersect_dist(point, &unitd))
+            .enumerate()
+            .fold(None, |min, (idx, dist_op)| {
+                match (min, dist_op) {
+                    (Some((_, dist_min)), Some(dist_val)) if dist_val < dist_min => {
+                        Some((idx, dist_val))
                     }
-                    (Some(dist_val), None) => Some((dist_val, shape)),
+                    (None, Some(dist_val)) => Some((idx, dist_val)),
                     _ => min,
                 }
             });
 
         // get intersection point info
-        if let Some((_, shape)) = closest {
-            shape.intersect(point, dir)
+        if let Some((idx, _)) = closest {
+            self.shapes[idx].intersect(point, dir)
         } else {
             None
         }

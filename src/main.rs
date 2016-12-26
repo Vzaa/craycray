@@ -24,9 +24,7 @@ use rayon::prelude::*;
 
 // Return true for quit
 fn handle_events(scene: &mut Scene,
-                 event_pump: &mut EventPump,
-                 x: i32,
-                 y: i32)
+                 event_pump: &mut EventPump)
                  -> bool {
     for event in event_pump.poll_iter() {
         match event {
@@ -42,8 +40,10 @@ fn handle_events(scene: &mut Scene,
         }
     }
 
-    let x_rot = x as f64 * (0.010);
-    let y_rot = y as f64 * (0.010);
+    let rel_mouse =  event_pump.relative_mouse_state();
+
+    let x_rot = rel_mouse.x() as f64 * (0.010);
+    let y_rot = rel_mouse.y() as f64 * (0.010);
     scene.rot_camera(x_rot, y_rot);
     false
 }
@@ -111,11 +111,10 @@ fn main() {
         lines.push((line_no, Vec::with_capacity(res_u)));
     }
 
-    let mut frame_cnt = 0;
+    let mut frame_cnt: u32 = 0;
     let mut time_stamp = Instant::now();
     loop {
-        let (_, x, y) = sdl_context.mouse().relative_mouse_state();
-        let quit = handle_events(&mut scene, &mut event_pump, x, y);
+        let quit = handle_events(&mut scene, &mut event_pump);
         if quit {
             break;
         }

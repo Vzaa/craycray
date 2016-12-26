@@ -1,3 +1,5 @@
+#[macro_use]
+extern crate clap;
 extern crate sdl2;
 extern crate vecmath;
 extern crate rayon;
@@ -83,7 +85,17 @@ fn test_scene() -> Scene {
 
 // A simple test code that uses SDL for rendering
 fn main() {
-    let resolution: u32 = 512;
+    let matches = clap_app!(craycray =>
+        (version: "0.1")
+        (about: "craycray")
+        (@arg RESOLUTION: -r --resolution +takes_value "Render resolution")
+        (@arg FULLSCREEN: -f --fullscreen "Fullscreen")
+    )
+        .get_matches();
+
+
+    let fullscreen = matches.is_present("FULLSCREEN");
+    let resolution: u32 = matches.value_of("RESOLUTION").unwrap_or("512").parse().unwrap_or(512);
     let res_u = resolution as usize;
     let mut scene = test_scene();
 
@@ -91,10 +103,20 @@ fn main() {
     let sdl_context = sdl2::init().unwrap();
     let video_subsystem = sdl_context.video().unwrap();
 
-    let window = video_subsystem.window("Ray", resolution, resolution)
-        .position_centered()
-        .build()
-        .unwrap();
+    let window = if fullscreen {
+        let display_mode = video_subsystem.desktop_display_mode(0).unwrap();
+        video_subsystem.window("craycray", display_mode.w as u32, display_mode.h as u32)
+            .fullscreen_desktop()
+            .build()
+            .unwrap()
+    } else {
+        video_subsystem.window("craycray", resolution, resolution)
+            .position_centered()
+            .build()
+            .unwrap()
+    };
+
+    let (_, window_h) = window.size();
 
     let mut renderer = window.renderer().build().unwrap();
 
@@ -151,7 +173,7 @@ fn main() {
         renderer.clear();
         renderer.copy(&texture,
                   None,
-                  Some(Rect::new(0, 0, resolution, resolution)))
+                  Some(Rect::new(0, 0, window_h, window_h)))
             .unwrap();
         renderer.present();
         frame_cnt += 1;

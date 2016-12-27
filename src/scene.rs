@@ -33,7 +33,7 @@ impl Scene {
     }
 
     pub fn step(&mut self) {
-        //self.light.translate(&[1.0, 0.0, 0.0]);
+        // self.light.translate(&[1.0, 0.0, 0.0]);
     }
 
     pub fn mv_camera_fwd(&mut self) {
@@ -104,20 +104,20 @@ impl Scene {
             let feeler_d = vec3_sub(*self.light.get_pos(), intersect.point);
             let dist_light = vec3_len(feeler_d);
             let feeler_d_unit = vec3_normalized(feeler_d);
-            let direct_light =
-                self.is_direct_light(&intersect.point, &feeler_d_unit, dist_light);
+            let direct_light = self.is_direct_light(&intersect.point, &feeler_d_unit, dist_light);
 
             let local = phong(point, &intersect, &self.light, direct_light);
 
             let tmp = vec3_normalized_sub(intersect.point, *point);
-            let reflection_dir =
-                vec3_normalized_sub(tmp,
-                                    vec3_scale(intersect.normal,
-                                               2.0 * vec3_dot(tmp, intersect.normal)));
+            let reflection_dir = vec3_normalized_sub(tmp,
+                                                     vec3_scale(intersect.normal,
+                                                                2.0 *
+                                                                vec3_dot(tmp, intersect.normal)));
 
             let reflected = self.trace(&intersect.point, &reflection_dir, depth + 1);
 
-            Color::add(&local, &(Color::scale(&reflected, intersect.material.reflectivity)))
+            Color::add(&local,
+                       &(Color::scale(&reflected, intersect.material.reflectivity)))
         } else {
             BLACK
         }

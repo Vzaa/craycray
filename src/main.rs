@@ -25,9 +25,7 @@ use std::time::Instant;
 use rayon::prelude::*;
 
 // Return true for quit
-fn handle_events(scene: &mut Scene,
-                 event_pump: &mut EventPump)
-                 -> bool {
+fn handle_events(scene: &mut Scene, event_pump: &mut EventPump) -> bool {
     for event in event_pump.poll_iter() {
         match event {
             Event::Quit { .. } |
@@ -42,7 +40,7 @@ fn handle_events(scene: &mut Scene,
         }
     }
 
-    let rel_mouse =  event_pump.relative_mouse_state();
+    let rel_mouse = event_pump.relative_mouse_state();
 
     let x_rot = rel_mouse.x() as f64 * (0.010);
     let y_rot = rel_mouse.y() as f64 * (0.010);
@@ -74,12 +72,24 @@ fn test_scene() -> Scene {
     scene.add_shape(Box::new(Sphere::from_material([15.0, 0.0, 40.0], 5.0, material::MIRROR)));
     scene.add_shape(Box::new(Sphere::new([-45.0, 0.0, 45.0], 20.0, color::Color(0.1, 0.1, 0.1))));
 
-    scene.add_shape(Box::new(Plane::new([0.0, -200.0, 0.0], [0.0, 1.0, 0.0], color::Color(0.4, 0.4, 0.4))));
-    scene.add_shape(Box::new(Plane::new([0.0, 200.0, 0.0], [0.0, -1.0, 0.0], color::Color(0.4, 0.4, 0.4))));
-    scene.add_shape(Box::new(Plane::from_material([200.0, 0.0, 0.0], [-1.0, 0.0, 0.0], material::MIRROR)));
-    scene.add_shape(Box::new(Plane::new([-200.0, 0.0, 0.0], [1.0, 0.0, 0.0], color::Color(0.8, 0.4, 0.8))));
-    scene.add_shape(Box::new(Plane::new([0.0, 0.0, 200.0], [0.0, 0.0, -1.0], color::Color(0.4, 0.4, 0.4))));
-    scene.add_shape(Box::new(Plane::new([0.0, 0.0, -200.0], [0.0, 0.0, 1.0], color::Color(0.4, 0.4, 0.4))));
+    scene.add_shape(Box::new(Plane::new([0.0, -200.0, 0.0],
+                                        [0.0, 1.0, 0.0],
+                                        color::Color(0.4, 0.4, 0.4))));
+    scene.add_shape(Box::new(Plane::new([0.0, 200.0, 0.0],
+                                        [0.0, -1.0, 0.0],
+                                        color::Color(0.4, 0.4, 0.4))));
+    scene.add_shape(Box::new(Plane::from_material([200.0, 0.0, 0.0],
+                                                  [-1.0, 0.0, 0.0],
+                                                  material::MIRROR)));
+    scene.add_shape(Box::new(Plane::new([-200.0, 0.0, 0.0],
+                                        [1.0, 0.0, 0.0],
+                                        color::Color(0.8, 0.4, 0.8))));
+    scene.add_shape(Box::new(Plane::new([0.0, 0.0, 200.0],
+                                        [0.0, 0.0, -1.0],
+                                        color::Color(0.4, 0.4, 0.4))));
+    scene.add_shape(Box::new(Plane::new([0.0, 0.0, -200.0],
+                                        [0.0, 0.0, 1.0],
+                                        color::Color(0.4, 0.4, 0.4))));
     scene
 }
 
@@ -143,7 +153,8 @@ fn main() {
 
         if frame_cnt == 10 {
             let elapsed = time_stamp.elapsed();
-            let msecs = (elapsed.as_secs() * 1000) as u64 + (elapsed.subsec_nanos() as u64 / 1000000);
+            let msecs = (elapsed.as_secs() * 1000) as u64 +
+                        (elapsed.subsec_nanos() as u64 / 1000000);
             time_stamp = Instant::now();
             println!("FPS {}", (frame_cnt as f32) / (msecs as f32 / 1000.0));
             frame_cnt = 0;
@@ -169,11 +180,10 @@ fn main() {
                         line_buf[offset + 2] = c.2;
                     }
                 }
-            }).unwrap();
+            })
+            .unwrap();
         renderer.clear();
-        renderer.copy(&texture,
-                  None,
-                  Some(Rect::new(0, 0, window_h, window_h)))
+        renderer.copy(&texture, None, Some(Rect::new(0, 0, window_h, window_h)))
             .unwrap();
         renderer.present();
         frame_cnt += 1;

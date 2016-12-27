@@ -136,19 +136,19 @@ impl Scene {
     fn closest_q(&self, point: &Vec3d, dir: &Vec3d) -> Option<Intersection> {
         let unitd = vec3_normalized(*dir);
 
+        let find_min_opt = |min, (idx, op_val)| {
+            match (min, op_val) {
+                (Some((_, min_val)), Some(val)) if val < min_val => Some((idx, val)),
+                (None, Some(val)) => Some((idx, val)),
+                _ => min,
+            }
+        };
+
         let closest = self.shapes
             .iter()
             .map(|x| x.intersect_dist(point, &unitd))
             .enumerate()
-            .fold(None, |min, (idx, dist_op)| {
-                match (min, dist_op) {
-                    (Some((_, dist_min)), Some(dist_val)) if dist_val < dist_min => {
-                        Some((idx, dist_val))
-                    }
-                    (None, Some(dist_val)) => Some((idx, dist_val)),
-                    _ => min,
-                }
-            });
+            .fold(None, find_min_opt);
 
         // get intersection point info
         if let Some((idx, _)) = closest {

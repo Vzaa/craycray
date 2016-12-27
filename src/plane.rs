@@ -5,9 +5,9 @@ use material::*;
 use shape::*;
 
 pub struct Plane {
+    material: Material,
     point: Vec3d,
     normal: Vec3d,
-    material: Material,
 }
 
 impl Plane {
@@ -35,7 +35,7 @@ impl Plane {
     }
 }
 
-impl Shape for Plane {
+impl Intersectable for Plane {
     fn intersect_dist(&self, p0: &Vec3d, d: &Vec3d) -> Option<f64> {
         let neg_norm = vec3_scale(self.normal, -1.0);
         let denom = vec3_dot(neg_norm, *d);

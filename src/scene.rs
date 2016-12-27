@@ -8,7 +8,7 @@ use color::*;
 use std;
 
 pub struct Scene {
-    shapes: Vec<Box<Shape + Sync>>,
+    shapes: Vec<Shape>,
     light: Light,
     camera_pos: Vec3d,
     camera_dir: Vec3d,
@@ -28,7 +28,7 @@ impl Scene {
         }
     }
 
-    pub fn add_shape(&mut self, s: Box<Shape + Sync>) {
+    pub fn add_shape(&mut self, s: Shape) {
         self.shapes.push(s);
     }
 

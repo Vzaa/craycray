@@ -5,9 +5,9 @@ use shape::*;
 use material::*;
 
 pub struct Sphere {
+    material: Material,
     center: Vec3d,
     radius: f64,
-    material: Material,
 }
 
 impl Sphere {
@@ -35,7 +35,7 @@ impl Sphere {
     }
 }
 
-impl Shape for Sphere {
+impl Intersectable for Sphere {
     fn intersect_dist(&self, p0: &Vec3d, d: &Vec3d) -> Option<f64> {
         let p0_min_c = vec3_sub(*p0, self.center);
         let a = vec3_dot(*d, *d);

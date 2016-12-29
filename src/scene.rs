@@ -109,10 +109,9 @@ impl Scene {
             let local = phong(point, &intersect, &self.light, direct_light);
 
             let tmp = vec3_normalized_sub(intersect.point, *point);
-            let reflection_dir = vec3_normalized_sub(tmp,
-                                                     vec3_scale(intersect.normal,
-                                                                2.0 *
-                                                                vec3_dot(tmp, intersect.normal)));
+            let reflection_dir = vec3_sub(tmp,
+                                          vec3_scale(intersect.normal,
+                                                     2.0 * vec3_dot(tmp, intersect.normal)));
 
             let reflected = self.trace(&intersect.point, &reflection_dir, depth + 1);
 
@@ -125,17 +124,14 @@ impl Scene {
 
     // Is there anything on the path to the light
     fn is_direct_light(&self, point: &Vec3d, dir: &Vec3d, dl: f64) -> bool {
-        let unitd = vec3_normalized(*dir);
         !self.shapes
             .iter()
-            .map(|&ref x| x.intersect_dist(point, &unitd))
+            .map(|&ref x| x.intersect_dist(point, dir))
             .any(|dist_opt| dist_opt.map(|i| i < dl).unwrap_or(false))
     }
 
     // Checks against all objects and returns closest intersection
     fn closest_q(&self, point: &Vec3d, dir: &Vec3d) -> Option<Intersection> {
-        let unitd = vec3_normalized(*dir);
-
         let find_min_opt = |min, (idx, op_val)| {
             match (min, op_val) {
                 (Some((_, min_val)), Some(val)) if val < min_val => Some((idx, val)),
@@ -146,7 +142,7 @@ impl Scene {
 
         let closest = self.shapes
             .iter()
-            .map(|x| x.intersect_dist(point, &unitd))
+            .map(|x| x.intersect_dist(point, dir))
             .enumerate()
             .fold(None, find_min_opt);
 
@@ -302,9 +298,8 @@ fn phong(view_point: &Vec3d,
 
     let v = vec3_normalized_sub(*view_point, intersection.point);
     let lt = vec3_normalized_sub(*light_pos, intersection.point);
-    let r = vec3_normalized_sub(vec3_scale(intersection.normal,
-                                           2.0 * vec3_dot(intersection.normal, lt)),
-                                lt);
+    let r = vec3_sub(vec3_scale(intersection.normal, 2.0 * vec3_dot(intersection.normal, lt)),
+                     lt);
 
     let mut s = vec3_dot(r, v).powf(point_material.shininess);
     if s < 0.0 {

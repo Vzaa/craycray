@@ -127,7 +127,7 @@ impl Scene {
         !self.shapes
             .iter()
             .map(|&ref x| x.intersect_dist(point, dir))
-            .any(|dist_opt| dist_opt.map(|i| i < dl).unwrap_or(false))
+            .any(|dist_opt| dist_opt.map_or(false, |i| i < dl))
     }
 
     // Checks against all objects and returns closest intersection

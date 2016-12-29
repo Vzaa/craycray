@@ -101,7 +101,7 @@ impl Scene {
             return color::BLACK;
         }
 
-        if let Some(intersect) = self.closest_q(point, dir) {
+        self.closest_q(point, dir).and_then(|intersect| {
             let feeler_d = vec3_sub(*self.light.get_pos(), intersect.point);
             let dist_light = vec3_len(feeler_d);
             let feeler_d_unit = vec3_normalized(feeler_d);
@@ -116,11 +116,10 @@ impl Scene {
 
             let reflected = self.trace(&intersect.point, &reflection_dir, depth + 1);
 
-            Color::add(&local,
-                       &(Color::scale(&reflected, intersect.material.reflectivity)))
-        } else {
-            color::BLACK
-        }
+            Some(Color::add(&local,
+                       &(Color::scale(&reflected, intersect.material.reflectivity))))
+        })
+        .unwrap_or(color::BLACK)
     }
 
     // Is there anything on the path to the light

@@ -1,8 +1,9 @@
 use vecmath::*;
 use vec3d::*;
-use color::*;
 use material::*;
 use shape::*;
+use color;
+use color::Color;
 
 pub struct Plane {
     material: Material,
@@ -14,8 +15,8 @@ impl Plane {
     pub fn new(point: Vec3d, normal: Vec3d, c: Color) -> Plane {
         let material = Material {
             diffuse_color: c,
-            ambient_color: BLACK,
-            specular_color: BLACK,
+            ambient_color: color::BLACK,
+            specular_color: color::BLACK,
             shininess: 15.0,
             reflectivity: 0.1,
         };

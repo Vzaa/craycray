@@ -3,7 +3,9 @@ use vecmath::*;
 use shape::*;
 use vec3d::*;
 use light::*;
-use color::*;
+
+use color;
+use color::Color;
 
 use std;
 
@@ -96,11 +98,10 @@ impl Scene {
     // Recursively trace lines
     fn trace(&self, point: &Vec3d, dir: &Vec3d, depth: i32) -> Color {
         if depth >= self.max_reflection {
-            return BLACK;
+            return color::BLACK;
         }
 
-        let intersect_res = self.closest_q(point, dir);
-        if let Some(intersect) = intersect_res {
+        if let Some(intersect) = self.closest_q(point, dir) {
             let feeler_d = vec3_sub(*self.light.get_pos(), intersect.point);
             let dist_light = vec3_len(feeler_d);
             let feeler_d_unit = vec3_normalized(feeler_d);
@@ -118,7 +119,7 @@ impl Scene {
             Color::add(&local,
                        &(Color::scale(&reflected, intersect.material.reflectivity)))
         } else {
-            BLACK
+            color::BLACK
         }
     }
 

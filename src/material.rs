@@ -1,4 +1,5 @@
-use color::*;
+use color;
+use color::Color;
 
 #[derive(Copy, Clone)]
 pub struct Material {
@@ -10,9 +11,9 @@ pub struct Material {
 }
 
 pub const MIRROR: Material = Material {
-    ambient_color: BLACK,
-    specular_color: BLACK,
-    diffuse_color: BLACK,
+    ambient_color: color::BLACK,
+    specular_color: color::BLACK,
+    diffuse_color: color::BLACK,
     shininess: 0.0,
     reflectivity: 1.0,
 };

@@ -1,8 +1,9 @@
 use vecmath::*;
 use vec3d::*;
-use color::*;
 use shape::*;
-use material::*;
+use material::Material;
+use color;
+use color::Color;
 
 pub struct Sphere {
     material: Material,
@@ -14,8 +15,8 @@ impl Sphere {
     pub fn new(center: Vec3d, radius: f64, c: Color) -> Sphere {
         let material = Material {
             diffuse_color: c,
-            ambient_color: BLACK,
-            specular_color: WHITE,
+            ambient_color: color::BLACK,
+            specular_color: color::WHITE,
             shininess: 15.0,
             reflectivity: 0.3,
         };

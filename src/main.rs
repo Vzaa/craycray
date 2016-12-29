@@ -53,8 +53,6 @@ fn handle_events(scene: &mut Scene, event_pump: &mut EventPump) -> bool {
 fn test_scene() -> Scene {
     use light::Light;
     use vec3d::Vec3d;
-    use sphere::Sphere;
-    use plane::Plane;
 
     let camera_pos: Vec3d = [0.0, 0.0, -100.0];
 

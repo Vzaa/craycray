@@ -133,12 +133,11 @@ impl Scene {
 
     // Checks against all objects and returns closest intersection
     fn closest_q(&self, point: &Vec3d, dir: &Vec3d) -> Option<Intersection> {
-        let find_min_opt = |min, (idx, op_val)| {
+        let find_min_opt = |min, (idx, op_val)|
             match (min, op_val) {
                 (Some((_, min_val)), Some(val)) if val < min_val => Some((idx, val)),
                 (None, Some(val)) => Some((idx, val)),
                 _ => min,
-            }
         };
 
         let closest = self.shapes

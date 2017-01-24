@@ -137,11 +137,6 @@ fn main() {
 
     let mut event_pump = sdl_context.event_pump().unwrap();
 
-    let mut lines: Vec<(usize, Vec<(u8, u8, u8)>)> = Vec::new();
-    for line_no in 0..res_u {
-        lines.push((line_no, Vec::with_capacity(res_u)));
-    }
-
     let mut frame_cnt: u32 = 0;
     let mut time_stamp = Instant::now();
     loop {
@@ -161,24 +156,15 @@ fn main() {
 
         scene.step();
 
-        lines.par_iter_mut().for_each(|tup| {
-            let (line_no, ref mut vec) = *tup;
-            vec.clear();
-            vec.extend(scene.line_iter_u8(res_u, res_u, line_no));
-        });
-
         texture.with_lock(None, |buffer: &mut [u8], pitch: usize| {
-                for tup in &lines {
-                    let (line_no, ref vec) = *tup;
-                    let line_start = line_no * pitch;
-                    let line_end = line_start + res_u * 3;
-                    let line_buf = &mut buffer[line_start..line_end];
-                    for (c, offset) in vec.iter().zip((0..).map(|x| 3 * x)) {
-                        line_buf[offset] = c.0;
-                        line_buf[offset + 1] = c.1;
-                        line_buf[offset + 2] = c.2;
+                let pchunks = buffer.par_chunks_mut(pitch);
+                pchunks.enumerate().for_each(|(line_no, chunk)|
+                    for (idx, c) in scene.line_iter_u8(res_u, res_u, line_no).enumerate() {
+                        chunk[idx * 3] = c.0;
+                        chunk[idx * 3 + 1] = c.1;
+                        chunk[idx * 3 + 2] = c.2;
                     }
-                }
+                );
             })
             .unwrap();
         renderer.clear();

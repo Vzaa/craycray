@@ -1,0 +1,462 @@
+{
+  "shapes": [
+    {
+      "Sphere": {
+        "material": {
+          "ambient_color": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "specular_color": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "diffuse_color": [
+            1.0,
+            0.5,
+            0.5
+          ],
+          "shininess": 15.0,
+          "reflectivity": 0.3
+        },
+        "center": [
+          -20.0,
+          -15.0,
+          45.0
+        ],
+        "radius": 5.0
+      }
+    },
+    {
+      "Sphere": {
+        "material": {
+          "ambient_color": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "specular_color": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "diffuse_color": [
+            0.4,
+            0.4,
+            0.4
+          ],
+          "shininess": 15.0,
+          "reflectivity": 0.3
+        },
+        "center": [
+          15.0,
+          -10.0,
+          35.0
+        ],
+        "radius": 5.0
+      }
+    },
+    {
+      "Sphere": {
+        "material": {
+          "ambient_color": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "specular_color": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "diffuse_color": [
+            0.5,
+            0.5,
+            1.0
+          ],
+          "shininess": 15.0,
+          "reflectivity": 0.3
+        },
+        "center": [
+          0.0,
+          -10.0,
+          25.0
+        ],
+        "radius": 5.0
+      }
+    },
+    {
+      "Sphere": {
+        "material": {
+          "ambient_color": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "specular_color": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "diffuse_color": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "shininess": 15.0,
+          "reflectivity": 0.3
+        },
+        "center": [
+          0.0,
+          -120.0,
+          55.0
+        ],
+        "radius": 100.0
+      }
+    },
+    {
+      "Sphere": {
+        "material": {
+          "ambient_color": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "specular_color": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "diffuse_color": [
+            1.0,
+            1.0,
+            0.0
+          ],
+          "shininess": 15.0,
+          "reflectivity": 0.3
+        },
+        "center": [
+          0.0,
+          120.0,
+          55.0
+        ],
+        "radius": 100.0
+      }
+    },
+    {
+      "Sphere": {
+        "material": {
+          "ambient_color": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "specular_color": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "diffuse_color": [
+            1.0,
+            0.5,
+            1.0
+          ],
+          "shininess": 15.0,
+          "reflectivity": 0.3
+        },
+        "center": [
+          0.0,
+          0.0,
+          200.0
+        ],
+        "radius": 100.0
+      }
+    },
+    {
+      "Sphere": {
+        "material": {
+          "ambient_color": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "specular_color": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "diffuse_color": [
+            0.1,
+            0.1,
+            0.1
+          ],
+          "shininess": 15.0,
+          "reflectivity": 0.3
+        },
+        "center": [
+          -45.0,
+          0.0,
+          45.0
+        ],
+        "radius": 20.0
+      }
+    },
+    {
+      "Sphere": {
+        "material": {
+          "ambient_color": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "specular_color": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "diffuse_color": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "shininess": 0.0,
+          "reflectivity": 1.0
+        },
+        "center": [
+          15.0,
+          0.0,
+          40.0
+        ],
+        "radius": 5.0
+      }
+    },
+    {
+      "Plane": {
+        "material": {
+          "ambient_color": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "specular_color": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "diffuse_color": [
+            0.4,
+            0.4,
+            0.4
+          ],
+          "shininess": 15.0,
+          "reflectivity": 0.1
+        },
+        "point": [
+          0.0,
+          -200.0,
+          0.0
+        ],
+        "normal": [
+          0.0,
+          1.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "Plane": {
+        "material": {
+          "ambient_color": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "specular_color": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "diffuse_color": [
+            0.4,
+            0.4,
+            0.4
+          ],
+          "shininess": 15.0,
+          "reflectivity": 0.1
+        },
+        "point": [
+          0.0,
+          200.0,
+          0.0
+        ],
+        "normal": [
+          0.0,
+          -1.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "Plane": {
+        "material": {
+          "ambient_color": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "specular_color": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "diffuse_color": [
+            0.8,
+            0.4,
+            0.8
+          ],
+          "shininess": 15.0,
+          "reflectivity": 0.1
+        },
+        "point": [
+          -200.0,
+          0.0,
+          0.0
+        ],
+        "normal": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "Plane": {
+        "material": {
+          "ambient_color": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "specular_color": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "diffuse_color": [
+            0.4,
+            0.4,
+            0.4
+          ],
+          "shininess": 15.0,
+          "reflectivity": 0.1
+        },
+        "point": [
+          0.0,
+          0.0,
+          200.0
+        ],
+        "normal": [
+          0.0,
+          0.0,
+          -1.0
+        ]
+      }
+    },
+    {
+      "Plane": {
+        "material": {
+          "ambient_color": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "specular_color": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "diffuse_color": [
+            0.4,
+            0.4,
+            0.4
+          ],
+          "shininess": 15.0,
+          "reflectivity": 0.1
+        },
+        "point": [
+          0.0,
+          0.0,
+          -200.0
+        ],
+        "normal": [
+          0.0,
+          0.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "Plane": {
+        "material": {
+          "ambient_color": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "specular_color": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "diffuse_color": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "shininess": 0.0,
+          "reflectivity": 1.0
+        },
+        "point": [
+          200.0,
+          0.0,
+          0.0
+        ],
+        "normal": [
+          -1.0,
+          0.0,
+          0.0
+        ]
+      }
+    }
+  ],
+  "light": {
+    "pos": [
+      50.0,
+      5.0,
+      -100.0
+    ],
+    "color": [
+      0.6,
+      0.6,
+      0.6
+    ]
+  },
+  "camera_pos": [
+    0.0,
+    0.0,
+    -100.0
+  ],
+  "camera_dir": [
+    0.0,
+    0.0,
+    1.0
+  ],
+  "camera_up": [
+    0.0,
+    1.0,
+    0.0
+  ],
+  "max_reflection": 4
+}

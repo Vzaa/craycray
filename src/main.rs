@@ -3,6 +3,9 @@ extern crate clap;
 extern crate sdl2;
 extern crate vecmath;
 extern crate rayon;
+#[macro_use]
+extern crate serde_derive;
+extern crate serde_json;
 
 mod vec3d;
 mod light;
@@ -13,15 +16,13 @@ mod shape;
 mod sphere;
 mod plane;
 
-use scene::Scene;
-
 use sdl2::pixels::PixelFormatEnum;
 use sdl2::rect::Rect;
 use sdl2::EventPump;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use std::time::Instant;
-use shape::Shape;
+use scene::Scene;
 
 use rayon::prelude::*;
 
@@ -49,49 +50,6 @@ fn handle_events(scene: &mut Scene, event_pump: &mut EventPump) -> bool {
     false
 }
 
-// Test scene
-fn test_scene() -> Scene {
-    use light::Light;
-    use vec3d::Vec3d;
-
-    let camera_pos: Vec3d = [0.0, 0.0, -100.0];
-
-    let camera_dir: Vec3d = [0.0, 0.0, 1.0];
-    let camera_up: Vec3d = [0.0, 1.0, 0.0];
-    let light_pos: Vec3d = [50.0, 5.0, -100.0];
-
-    let light = Light::new(light_pos, color::Color(0.6, 0.6, 0.6));
-    let mut scene = Scene::new(light, camera_pos, camera_dir, camera_up);
-    scene.add_shape(Shape::new_sphere([-20.0, -15.0, 45.0], 5.0, color::Color(1.0, 0.5, 0.5)));
-    scene.add_shape(Shape::new_sphere([15.0, -10.0, 35.0], 5.0, color::Color(0.4, 0.4, 0.4)));
-    scene.add_shape(Shape::new_sphere([0.0, -10.0, 25.0], 5.0, color::Color(0.5, 0.5, 1.0)));
-    scene.add_shape(Shape::new_sphere([0.0, -120.0, 55.0], 100.0, color::WHITE));
-    scene.add_shape(Shape::new_sphere([0.0, 120.0, 55.0], 100.0, color::Color(1.0, 1.0, 0.0)));
-    scene.add_shape(Shape::new_sphere([0.0, 0.0, 200.0], 100.0, color::Color(1.0, 0.5, 1.0)));
-    scene.add_shape(Shape::new_sphere([-45.0, 0.0, 45.0], 20.0, color::Color(0.1, 0.1, 0.1)));
-    scene.add_shape(Shape::new_sphere_material([15.0, 0.0, 40.0], 5.0, material::MIRROR));
-
-    scene.add_shape(Shape::new_plane([0.0, -200.0, 0.0],
-                                     [0.0, 1.0, 0.0],
-                                     color::Color(0.4, 0.4, 0.4)));
-    scene.add_shape(Shape::new_plane([0.0, 200.0, 0.0],
-                                     [0.0, -1.0, 0.0],
-                                     color::Color(0.4, 0.4, 0.4)));
-    scene.add_shape(Shape::new_plane([-200.0, 0.0, 0.0],
-                                     [1.0, 0.0, 0.0],
-                                     color::Color(0.8, 0.4, 0.8)));
-    scene.add_shape(Shape::new_plane([0.0, 0.0, 200.0],
-                                     [0.0, 0.0, -1.0],
-                                     color::Color(0.4, 0.4, 0.4)));
-    scene.add_shape(Shape::new_plane([0.0, 0.0, -200.0],
-                                     [0.0, 0.0, 1.0],
-                                     color::Color(0.4, 0.4, 0.4)));
-    scene.add_shape(Shape::new_plane_material([200.0, 0.0, 0.0],
-                                              [-1.0, 0.0, 0.0],
-                                              material::MIRROR));
-    scene
-}
-
 // A simple test code that uses SDL for rendering
 fn main() {
     let matches = clap_app!(craycray =>
@@ -106,7 +64,7 @@ fn main() {
     let fullscreen = matches.is_present("FULLSCREEN");
     let resolution: u32 = matches.value_of("RESOLUTION").unwrap_or("512").parse().unwrap_or(512);
     let res_u = resolution as usize;
-    let mut scene = test_scene();
+    let mut scene = Scene::from_file("scene.json").unwrap();
 
     // Stuff from sdl2-rust example
     let sdl_context = sdl2::init().unwrap();

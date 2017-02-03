@@ -1,7 +1,7 @@
 use color;
 use color::Color;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize, Deserialize)]
 pub struct Material {
     pub ambient_color: Color,
     pub specular_color: Color,

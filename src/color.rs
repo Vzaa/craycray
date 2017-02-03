@@ -1,4 +1,4 @@
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize, Deserialize)]
 pub struct Color(pub f64, pub f64, pub f64);
 
 pub const RED: Color = Color(1.0, 0.0, 0.0);

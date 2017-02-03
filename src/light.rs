@@ -2,6 +2,7 @@ use vec3d::Vec3d;
 use color::Color;
 use vecmath::*;
 
+#[derive(Serialize, Deserialize)]
 pub struct Light {
     pos: Vec3d,
     color: Color,

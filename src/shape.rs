@@ -15,6 +15,8 @@ pub trait Intersectable {
     fn intersect(&self, p0: &Vec3d, d: &Vec3d) -> Option<Intersection>;
 }
 
+
+#[derive(Serialize, Deserialize)]
 pub enum Shape {
     Sphere(Sphere),
     Plane(Plane),

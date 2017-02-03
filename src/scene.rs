@@ -1,3 +1,8 @@
+use std::io::{BufReader, BufWriter, BufRead, Write};
+use std::fs::File;
+
+use serde_json;
+
 use vecmath::*;
 
 use shape::*;
@@ -9,6 +14,7 @@ use color::Color;
 
 use std;
 
+#[derive(Serialize, Deserialize)]
 pub struct Scene {
     shapes: Vec<Shape>,
     light: Light,
@@ -28,6 +34,13 @@ impl Scene {
             camera_up: camera_up,
             max_reflection: 4,
         }
+    }
+
+    pub fn from_file(filename: &str) -> Result<Scene, String> {
+        let file_in = File::open(filename).map_err(|e| format!("Can't open input file: {}", e))?;
+        let reader = BufReader::new(&file_in);
+
+        serde_json::from_reader(reader).map_err(|e| format!("JSON Parse error: {}", e))?
     }
 
     pub fn add_shape(&mut self, s: Shape) {

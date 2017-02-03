@@ -5,6 +5,7 @@ use shape::*;
 use color;
 use color::Color;
 
+#[derive(Serialize, Deserialize)]
 pub struct Plane {
     material: Material,
     point: Vec3d,

@@ -5,6 +5,7 @@ use material::Material;
 use color;
 use color::Color;
 
+#[derive(Serialize, Deserialize)]
 pub struct Sphere {
     material: Material,
     center: Vec3d,

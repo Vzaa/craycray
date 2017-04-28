@@ -1,20 +1,8 @@
 #[macro_use]
 extern crate clap;
 extern crate sdl2;
-extern crate vecmath;
 extern crate rayon;
-#[macro_use]
-extern crate serde_derive;
-extern crate serde_json;
-
-mod vec3d;
-mod light;
-mod scene;
-mod material;
-mod color;
-mod shape;
-mod sphere;
-mod plane;
+extern crate craycray;
 
 use sdl2::pixels::PixelFormatEnum;
 use sdl2::rect::Rect;
@@ -22,7 +10,8 @@ use sdl2::EventPump;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use std::time::Instant;
-use scene::Scene;
+
+use craycray::scene::Scene;
 
 use rayon::prelude::*;
 

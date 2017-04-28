@@ -61,10 +61,10 @@ impl Intersectable for Plane {
                 let q = vec3_add(*p0, dir_scaled);
 
                 Some(Intersection {
-                    material: self.material,
-                    point: q,
-                    normal: self.normal,
-                })
+                         material: self.material,
+                         point: q,
+                         normal: self.normal,
+                     })
             } else {
                 None
             }

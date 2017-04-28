@@ -79,19 +79,19 @@ impl Intersectable for Sphere {
                 let n = vec3_normalized_sub(q, self.center);
                 let mat = self.material;
                 Some(Intersection {
-                    material: mat,
-                    point: q,
-                    normal: n,
-                })
+                         material: mat,
+                         point: q,
+                         normal: n,
+                     })
             } else if r1 > 0.5 {
                 let q = vec3_add(*p0, vec3_scale(*d, r1));
                 let n = vec3_normalized_sub(q, self.center);
                 let mat = self.material;
                 Some(Intersection {
-                    material: mat,
-                    point: q,
-                    normal: n,
-                })
+                         material: mat,
+                         point: q,
+                         normal: n,
+                     })
             } else {
                 None
             }

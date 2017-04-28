@@ -46,12 +46,15 @@ fn main() {
         (about: "craycray")
         (@arg RESOLUTION: -r --resolution +takes_value "Render resolution")
         (@arg FULLSCREEN: -f --fullscreen "Fullscreen")
-    )
-        .get_matches();
+    ).get_matches();
 
 
     let fullscreen = matches.is_present("FULLSCREEN");
-    let resolution: u32 = matches.value_of("RESOLUTION").unwrap_or("512").parse().unwrap_or(512);
+    let resolution: u32 = matches
+        .value_of("RESOLUTION")
+        .unwrap_or("512")
+        .parse()
+        .unwrap_or(512);
     let res_u = resolution as usize;
     let mut scene = Scene::from_file("scene.json").unwrap();
 
@@ -61,12 +64,14 @@ fn main() {
 
     let window = if fullscreen {
         let display_mode = video_subsystem.desktop_display_mode(0).unwrap();
-        video_subsystem.window("craycray", display_mode.w as u32, display_mode.h as u32)
+        video_subsystem
+            .window("craycray", display_mode.w as u32, display_mode.h as u32)
             .fullscreen_desktop()
             .build()
             .unwrap()
     } else {
-        video_subsystem.window("craycray", resolution, resolution)
+        video_subsystem
+            .window("craycray", resolution, resolution)
             .position_centered()
             .build()
             .unwrap()
@@ -76,9 +81,9 @@ fn main() {
 
     let mut renderer = window.renderer().build().unwrap();
 
-    let mut texture =
-        renderer.create_texture_streaming(PixelFormatEnum::RGB24, resolution, resolution)
-            .unwrap();
+    let mut texture = renderer
+        .create_texture_streaming(PixelFormatEnum::RGB24, resolution, resolution)
+        .unwrap();
     sdl_context.mouse().show_cursor(false);
     sdl_context.mouse().set_relative_mouse_mode(true);
 
@@ -103,19 +108,24 @@ fn main() {
 
         scene.step();
 
-        texture.with_lock(None, |buffer: &mut [u8], pitch: usize| {
+        texture
+            .with_lock(None, |buffer: &mut [u8], pitch: usize| {
                 let pchunks = buffer.par_chunks_mut(pitch);
-                pchunks.enumerate().for_each(|(line_no, chunk)|
-                    for (idx, c) in scene.line_iter_u8(res_u, res_u, line_no).enumerate() {
-                        chunk[idx * 3] = c.0;
-                        chunk[idx * 3 + 1] = c.1;
-                        chunk[idx * 3 + 2] = c.2;
-                    }
-                );
+                pchunks
+                    .enumerate()
+                    .for_each(|(line_no, chunk)| {
+                        for (idx, c) in scene
+                            .line_iter_u8(res_u, res_u, line_no).enumerate() {
+                                    chunk[idx * 3] = c.0;
+                                    chunk[idx * 3 + 1] = c.1;
+                                    chunk[idx * 3 + 2] = c.2;
+                                }
+                    });
             })
             .unwrap();
         renderer.clear();
-        renderer.copy(&texture, None, Some(Rect::new(0, 0, window_h, window_h)))
+        renderer
+            .copy(&texture, None, Some(Rect::new(0, 0, window_h, window_h)))
             .unwrap();
         renderer.present();
         frame_cnt += 1;

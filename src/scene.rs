@@ -37,10 +37,12 @@ impl Scene {
     }
 
     pub fn from_file(filename: &str) -> Result<Scene, String> {
-        let file_in = File::open(filename).map_err(|e| format!("Can't open input file: {}", e))?;
+        let file_in = File::open(filename)
+            .map_err(|e| format!("Can't open input file: {}", e))?;
         let reader = BufReader::new(&file_in);
 
-        let s: Scene = serde_json::from_reader(reader).map_err(|e| format!("JSON Parse error: {}", e))?;
+        let s: Scene = serde_json::from_reader(reader)
+            .map_err(|e| format!("JSON Parse error: {}", e))?;
         Ok(s)
     }
 
@@ -140,18 +142,19 @@ impl Scene {
     // Is there anything on the path to the light
     fn is_direct_light(&self, point: &Vec3d, dir: &Vec3d, dl: f64) -> bool {
         !self.shapes
-            .iter()
-            .map(|&ref x| x.intersect_dist(point, dir))
-            .any(|dist_opt| dist_opt.map_or(false, |i| i < dl))
+             .iter()
+             .map(|&ref x| x.intersect_dist(point, dir))
+             .any(|dist_opt| dist_opt.map_or(false, |i| i < dl))
     }
 
     // Checks against all objects and returns closest intersection
     fn closest_q(&self, point: &Vec3d, dir: &Vec3d) -> Option<Intersection> {
-        let find_min_opt = |min, (idx, op_val)|
+        let find_min_opt = |min, (idx, op_val)| {
             match (min, op_val) {
                 (Some((_, min_val)), Some(val)) if val < min_val => Some((idx, val)),
                 (None, Some(val)) => Some((idx, val)),
                 _ => min,
+            }
         };
 
         let closest = self.shapes
@@ -213,7 +216,8 @@ impl<'a> Iterator for DrawIter<'a> {
 
         self.point = vec3_add(self.point, self.right_step);
 
-        let c = self.scene.trace(&self.scene.camera_pos, &vec3_normalized(self.point), 0);
+        let c = self.scene
+            .trace(&self.scene.camera_pos, &vec3_normalized(self.point), 0);
 
         self.x += 1;
         if self.x >= self.h_res {
@@ -267,7 +271,8 @@ impl<'a> Iterator for LineIter<'a> {
 
         self.point = vec3_add(self.point, self.right_step);
 
-        let c = self.scene.trace(&self.scene.camera_pos, &vec3_normalized(self.point), 0);
+        let c = self.scene
+            .trace(&self.scene.camera_pos, &vec3_normalized(self.point), 0);
 
         Some(c)
     }

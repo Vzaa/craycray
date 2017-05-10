@@ -1,6 +1,5 @@
 use vec3d::Vec3d;
 use color::Color;
-use vecmath::*;
 
 #[derive(Serialize, Deserialize)]
 pub struct Light {
@@ -21,7 +20,7 @@ impl Light {
     }
 
     pub fn translate(&mut self, v: &Vec3d) {
-        self.pos = vec3_add(*v, self.pos);
+        self.pos = v + self.pos;
     }
 
     pub fn get_color(&self) -> &Color {

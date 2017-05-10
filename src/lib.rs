@@ -1,7 +1,8 @@
 #[macro_use]
 extern crate serde_derive;
 extern crate serde_json;
-extern crate vecmath;
+//extern crate vecmath;
+extern crate cgmath;
 
 pub mod color;
 pub mod vec3d;

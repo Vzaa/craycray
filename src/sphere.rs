@@ -1,4 +1,4 @@
-use vecmath::*;
+use cgmath::*;
 use vec3d::*;
 use shape::*;
 use material::Material;
@@ -39,10 +39,10 @@ impl Sphere {
 
 impl Intersectable for Sphere {
     fn intersect_dist(&self, p0: &Vec3d, d: &Vec3d) -> Option<f64> {
-        let p0_min_c = vec3_sub(*p0, self.center);
-        let a = vec3_dot(*d, *d);
-        let b = 2.0 * vec3_dot(*d, p0_min_c);
-        let c = vec3_dot(p0_min_c, p0_min_c) - (self.radius * self.radius);
+        let p0_min_c = p0 - self.center;
+        let a = d.dot(*d);
+        let b = 2.0 * d.dot(p0_min_c);
+        let c = p0_min_c.dot(p0_min_c) - (self.radius * self.radius);
         let delta = (b * b) - (4.0 * a * c);
 
         if delta < 0.0 {
@@ -62,10 +62,10 @@ impl Intersectable for Sphere {
     }
 
     fn intersect(&self, p0: &Vec3d, d: &Vec3d) -> Option<Intersection> {
-        let p0_min_c = vec3_sub(*p0, self.center);
-        let a = vec3_dot(*d, *d);
-        let b = 2.0 * vec3_dot(*d, p0_min_c);
-        let c = vec3_dot(p0_min_c, p0_min_c) - (self.radius * self.radius);
+        let p0_min_c = p0 - self.center;
+        let a = d.dot(*d);
+        let b = 2.0 * d.dot(p0_min_c);
+        let c = p0_min_c.dot(p0_min_c) - (self.radius * self.radius);
         let delta = (b * b) - (4.0 * a * c);
 
         if delta < 0.0 {
@@ -75,8 +75,8 @@ impl Intersectable for Sphere {
             let r0 = (-b - delta_sq) / (2.0 * a);
             let r1 = (-b + delta_sq) / (2.0 * a);
             if r0 > 0.5 && r0 < r1 {
-                let q = vec3_add(*p0, vec3_scale(*d, r0));
-                let n = vec3_normalized_sub(q, self.center);
+                let q = p0 + d * r0;
+                let n = (q - self.center).normalize();
                 let mat = self.material;
                 Some(Intersection {
                          material: mat,
@@ -84,8 +84,8 @@ impl Intersectable for Sphere {
                          normal: n,
                      })
             } else if r1 > 0.5 {
-                let q = vec3_add(*p0, vec3_scale(*d, r1));
-                let n = vec3_normalized_sub(q, self.center);
+                let q = p0 + d * r1;
+                let n = (q - self.center).normalize();
                 let mat = self.material;
                 Some(Intersection {
                          material: mat,

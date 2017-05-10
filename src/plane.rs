@@ -1,4 +1,4 @@
-use vecmath::*;
+use cgmath::*;
 use vec3d::*;
 use material::*;
 use shape::*;
@@ -23,7 +23,7 @@ impl Plane {
         };
         Plane {
             point: point,
-            normal: vec3_normalized(normal),
+            normal: normal.normalize(),
             material: material,
         }
     }
@@ -31,7 +31,7 @@ impl Plane {
     pub fn from_material(point: Vec3d, normal: Vec3d, material: Material) -> Plane {
         Plane {
             point: point,
-            normal: vec3_normalized(normal),
+            normal: normal.normalize(),
             material: material,
         }
     }
@@ -39,11 +39,11 @@ impl Plane {
 
 impl Intersectable for Plane {
     fn intersect_dist(&self, p0: &Vec3d, d: &Vec3d) -> Option<f64> {
-        let neg_norm = vec3_scale(self.normal, -1.0);
-        let denom = vec3_dot(neg_norm, *d);
+        let neg_norm = self.normal * -1.0;
+        let denom = neg_norm.dot(*d);
         if denom > 1e-6 {
-            let p0l0 = vec3_sub(self.point, *p0);
-            let t = vec3_dot(p0l0, neg_norm) / denom;
+            let p0l0 = self.point - p0;
+            let t = (p0l0.dot(neg_norm)) / denom;
             if t >= 0.0 { Some(t) } else { None }
         } else {
             None
@@ -51,14 +51,14 @@ impl Intersectable for Plane {
     }
 
     fn intersect(&self, p0: &Vec3d, d: &Vec3d) -> Option<Intersection> {
-        let neg_norm = vec3_scale(self.normal, -1.0);
-        let denom = vec3_dot(neg_norm, *d);
+        let neg_norm = self.normal * -1.0;
+        let denom = neg_norm.dot(*d);
         if denom > 1e-6 {
-            let p0l0 = vec3_sub(self.point, *p0);
-            let t = vec3_dot(p0l0, neg_norm) / denom;
+            let p0l0 = self.point - p0;
+            let t = (p0l0.dot(neg_norm)) / denom;
             if t >= 0.0 {
-                let dir_scaled = vec3_scale(*d, t);
-                let q = vec3_add(*p0, dir_scaled);
+                let dir_scaled = d * t;
+                let q = p0 + dir_scaled;
 
                 Some(Intersection {
                          material: self.material,

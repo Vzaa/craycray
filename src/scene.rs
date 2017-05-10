@@ -3,8 +3,7 @@ use std::fs::File;
 
 use serde_json;
 
-use vecmath::*;
-
+use cgmath::*;
 use shape::*;
 use vec3d::*;
 use light::*;
@@ -55,11 +54,11 @@ impl Scene {
     }
 
     pub fn mv_camera_fwd(&mut self) {
-        self.camera_pos = vec3_add(self.camera_pos, self.camera_dir);
+        self.camera_pos = self.camera_pos + self.camera_dir;
     }
 
     pub fn mv_camera_back(&mut self) {
-        self.camera_pos = vec3_sub(self.camera_pos, self.camera_dir);
+        self.camera_pos = self.camera_pos - self.camera_dir;
     }
 
     pub fn rot_camera(&mut self, x_rot: f64, y_rot: f64) {
@@ -67,20 +66,20 @@ impl Scene {
 
         // project camera_dir to X plane
         let mut x_proj = self.camera_dir;
-        x_proj[1] = 0.0;
-        x_proj = vec3_normalized(x_proj);
+        x_proj.x = 0.0;
+        x_proj = x_proj.normalize();
 
-        let angle = if x_proj[0] < 0.0 {
-            -vec3_dot([0.0, 0.0, 1.0], x_proj).acos()
+        let angle = if x_proj.x < 0.0 {
+            -Vec3d::new(0.0, 0.0, 1.0).dot(x_proj).acos()
         } else {
-            vec3_dot([0.0, 0.0, 1.0], x_proj).acos()
+            Vec3d::new(0.0, 0.0, 1.0).dot(x_proj).acos()
         };
 
         self.camera_dir = vec3_roty(self.camera_dir, -angle);
         self.camera_dir = vec3_rotx(self.camera_dir, y_rot);
         self.camera_dir = vec3_roty(self.camera_dir, angle);
 
-        self.camera_dir = vec3_normalized(self.camera_dir);
+        self.camera_dir = self.camera_dir.normalize();
     }
 
 
@@ -118,17 +117,15 @@ impl Scene {
         }
 
         if let Some(intersect) = self.closest_q(point, dir) {
-            let feeler_d = vec3_sub(*self.light.get_pos(), intersect.point);
-            let dist_light = vec3_len(feeler_d);
-            let feeler_d_unit = vec3_normalized(feeler_d);
+            let feeler_d = self.light.get_pos() - intersect.point;
+            let dist_light = feeler_d.magnitude();
+            let feeler_d_unit = feeler_d.normalize();
             let direct_light = self.is_direct_light(&intersect.point, &feeler_d_unit, dist_light);
 
             let local = phong(point, &intersect, &self.light, direct_light);
 
-            let tmp = vec3_normalized_sub(intersect.point, *point);
-            let reflection_dir = vec3_sub(tmp,
-                                          vec3_scale(intersect.normal,
-                                                     2.0 * vec3_dot(tmp, intersect.normal)));
+            let tmp = (intersect.point - point).normalize();
+            let reflection_dir = tmp - (intersect.normal * 2.0 * tmp.dot(intersect.normal));
 
             let reflected = self.trace(&intersect.point, &reflection_dir, depth + 1);
 
@@ -187,11 +184,11 @@ pub struct DrawIter<'a> {
 
 impl<'a> DrawIter<'a> {
     fn new(scene: &Scene, h: usize, v: usize) -> DrawIter {
-        let left = vec3_normalized(vec3_cross(scene.camera_dir, scene.camera_up));
-        let up = vec3_normalized(vec3_cross(left, scene.camera_dir));
-        let point = vec3_add(vec3_add(left, up), scene.camera_dir);
-        let right_step = vec3_scale(left, -2.0 / h as f64);
-        let down_step = vec3_scale(up, -2.0 / v as f64);
+        let left = scene.camera_dir.cross(scene.camera_up).normalize();
+        let up = left.cross(scene.camera_dir).normalize();
+        let point = left + up + scene.camera_dir;
+        let right_step = left * (-2.0 / h as f64);
+        let down_step = up * (-2.0 / v as f64);
         DrawIter {
             h_res: h,
             v_res: v,
@@ -214,18 +211,18 @@ impl<'a> Iterator for DrawIter<'a> {
             return None;
         }
 
-        self.point = vec3_add(self.point, self.right_step);
+        self.point = self.point + self.right_step;
 
         let c = self.scene
-            .trace(&self.scene.camera_pos, &vec3_normalized(self.point), 0);
+            .trace(&self.scene.camera_pos, &self.point.normalize(), 0);
 
         self.x += 1;
         if self.x >= self.h_res {
             self.x = 0;
             self.y += 1;
-            self.point = vec3_add(self.point, self.left);
-            self.point = vec3_add(self.point, self.left);
-            self.point = vec3_add(self.point, self.down_step);
+            self.point = self.point + self.left;
+            self.point = self.point + self.left;
+            self.point = self.point + self.down_step;
         }
 
         Some(c)
@@ -243,13 +240,13 @@ pub struct LineIter<'a> {
 
 impl<'a> LineIter<'a> {
     fn new(scene: &Scene, h: usize, v: usize, l: usize) -> LineIter {
-        let left = vec3_normalized(vec3_cross(scene.camera_dir, scene.camera_up));
-        let up = vec3_normalized(vec3_cross(left, scene.camera_dir));
-        let mut point = vec3_add(vec3_add(left, up), scene.camera_dir);
-        let right_step = vec3_scale(left, -2.0 / h as f64);
-        let down_step = vec3_scale(up, -2.0 / v as f64);
+        let left = scene.camera_dir.cross(scene.camera_up).normalize();
+        let up = left.cross(scene.camera_dir).normalize();
+        let mut point = left + up + scene.camera_dir;
+        let right_step = left * (-2.0 / h as f64);
+        let down_step = up * (-2.0 / v as f64);
 
-        point = vec3_add(point, vec3_scale(down_step, l as f64));
+        point = point + down_step * (l as f64);
         LineIter {
             h_res: h,
             x: 0,
@@ -269,10 +266,10 @@ impl<'a> Iterator for LineIter<'a> {
         }
         self.x += 1;
 
-        self.point = vec3_add(self.point, self.right_step);
+        self.point = self.point + self.right_step;
 
         let c = self.scene
-            .trace(&self.scene.camera_pos, &vec3_normalized(self.point), 0);
+            .trace(&self.scene.camera_pos, &self.point.normalize(), 0);
 
         Some(c)
     }
@@ -288,8 +285,9 @@ fn phong(view_point: &Vec3d,
     let point_material = intersection.material;
     let light_pos = light.get_pos();
     let light_color = light.get_color();
-    let mut d = vec3_dot(vec3_normalized_sub(*light_pos, intersection.point),
-                         intersection.normal);
+    let mut d = (light_pos - intersection.point)
+        .normalize()
+        .dot(intersection.normal);
 
     if d < 0.0 {
         d = 0.0;
@@ -315,12 +313,11 @@ fn phong(view_point: &Vec3d,
     let g_ambient = point_material.ambient_color.1;
     let b_ambient = point_material.ambient_color.2;
 
-    let v = vec3_normalized_sub(*view_point, intersection.point);
-    let lt = vec3_normalized_sub(*light_pos, intersection.point);
-    let r = vec3_sub(vec3_scale(intersection.normal, 2.0 * vec3_dot(intersection.normal, lt)),
-                     lt);
+    let v = (view_point - intersection.point).normalize();
+    let lt = (light_pos - intersection.point).normalize();
+    let r = intersection.normal * (2.0 * intersection.normal.dot(lt)) - lt;
 
-    let mut s = vec3_dot(r, v).powf(point_material.shininess);
+    let mut s = r.dot(v).powf(point_material.shininess);
     if s < 0.0 {
         s = 0.0;
     }

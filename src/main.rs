@@ -4,16 +4,17 @@ extern crate sdl2;
 extern crate rayon;
 extern crate craycray;
 
+use std::time::Instant;
+
 use sdl2::pixels::PixelFormatEnum;
 use sdl2::rect::Rect;
 use sdl2::EventPump;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
-use std::time::Instant;
-
-use craycray::scene::Scene;
 
 use rayon::prelude::*;
+
+use craycray::scene::Scene;
 
 // Return true for quit
 fn handle_events(scene: &mut Scene, event_pump: &mut EventPump) -> bool {

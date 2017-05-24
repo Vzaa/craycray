@@ -66,7 +66,7 @@ impl Scene {
 
         // project camera_dir to X plane
         let mut x_proj = self.camera_dir;
-        x_proj.x = 0.0;
+        x_proj.y = 0.0;
         x_proj = x_proj.normalize();
 
         let angle = if x_proj.x < 0.0 {

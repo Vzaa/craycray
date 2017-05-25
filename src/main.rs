@@ -80,9 +80,10 @@ fn main() {
 
     let (_, window_h) = window.size();
 
-    let mut renderer = window.renderer().build().unwrap();
+    let mut canvas = window.into_canvas().build().unwrap();
+    let texture_creator = canvas.texture_creator();
 
-    let mut texture = renderer
+    let mut texture = texture_creator
         .create_texture_streaming(PixelFormatEnum::RGB24, resolution, resolution)
         .unwrap();
     sdl_context.mouse().show_cursor(false);
@@ -92,6 +93,7 @@ fn main() {
 
     let mut frame_cnt: u32 = 0;
     let mut time_stamp = Instant::now();
+
     loop {
         let quit = handle_events(&mut scene, &mut event_pump);
         if quit {
@@ -124,11 +126,11 @@ fn main() {
                     });
             })
             .unwrap();
-        renderer.clear();
-        renderer
+        canvas.clear();
+        canvas
             .copy(&texture, None, Some(Rect::new(0, 0, window_h, window_h)))
             .unwrap();
-        renderer.present();
+        canvas.present();
         frame_cnt += 1;
     }
 }

@@ -4,7 +4,7 @@ version = "0.1.0"
 authors = ["Vzaa <Vzaa@users.noreply.github.com>"]
 
 [dependencies]
-sdl2 = "0.29.1"
+sdl2 = "0.30.0"
 rayon = "0.7.0"
 clap = "2.23.3"
 serde = "1.0.2"

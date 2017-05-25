@@ -150,18 +150,12 @@ impl Scene {
             }
         };
 
-        let closest = self.shapes
+        self.shapes
             .iter()
             .map(|x| x.intersect_dist(point, dir))
             .enumerate()
-            .fold(None, find_min_opt);
-
-        // get intersection point info
-        if let Some((idx, _)) = closest {
-            self.shapes[idx].intersect(point, dir)
-        } else {
-            None
-        }
+            .fold(None, find_min_opt)
+            .and_then(|(idx, _)| self.shapes[idx].intersect(point, dir))
     }
 }
 

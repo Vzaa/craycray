@@ -36,13 +36,9 @@ impl Scene {
     }
 
     pub fn from_file(filename: &str) -> Result<Scene, String> {
-        let file_in = File::open(filename)
-            .map_err(|e| format!("Can't open input file: {}", e))?;
-        let reader = BufReader::new(&file_in);
-
-        let s: Scene = serde_json::from_reader(reader)
-            .map_err(|e| format!("JSON Parse error: {}", e))?;
-        Ok(s)
+        File::open(filename)
+            .map_err(|e| format!("Can't open input file: {}", e))
+            .and_then(|f| serde_json::from_reader(BufReader::new(f)).map_err(|e| format!("JSON Parse error: {}", e)))
     }
 
     pub fn add_shape(&mut self, s: Shape) {

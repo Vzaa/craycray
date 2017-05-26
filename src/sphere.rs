@@ -38,9 +38,9 @@ impl Sphere {
 }
 
 impl Intersectable for Sphere {
-    fn intersect_dist(&self, p0: &Vec3d, d: &Vec3d) -> Option<f64> {
+    fn intersect_dist(&self, p0: Vec3d, d: Vec3d) -> Option<f64> {
         let p0_min_c = p0 - self.center;
-        let a = d.dot(*d);
+        let a = d.dot(d);
         let b = 2.0 * d.dot(p0_min_c);
         let c = p0_min_c.dot(p0_min_c) - (self.radius * self.radius);
         let delta = (b * b) - (4.0 * a * c);
@@ -61,9 +61,9 @@ impl Intersectable for Sphere {
         }
     }
 
-    fn intersect(&self, p0: &Vec3d, d: &Vec3d) -> Option<Intersection> {
+    fn intersect(&self, p0: Vec3d, d: Vec3d) -> Option<Intersection> {
         let p0_min_c = p0 - self.center;
-        let a = d.dot(*d);
+        let a = d.dot(d);
         let b = 2.0 * d.dot(p0_min_c);
         let c = p0_min_c.dot(p0_min_c) - (self.radius * self.radius);
         let delta = (b * b) - (4.0 * a * c);

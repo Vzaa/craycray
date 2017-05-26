@@ -15,15 +15,15 @@ impl Light {
         }
     }
 
-    pub fn get_pos(&self) -> &Vec3d {
-        &self.pos
+    pub fn get_pos(&self) -> Vec3d {
+        self.pos
     }
 
     pub fn translate(&mut self, v: &Vec3d) {
         self.pos = v + self.pos;
     }
 
-    pub fn get_color(&self) -> &Color {
-        &self.color
+    pub fn get_color(&self) -> Color {
+        self.color
     }
 }

@@ -1,3 +1,5 @@
+use std::ops::{Add, Mul};
+
 #[derive(Copy, Clone, Serialize, Deserialize)]
 pub struct Color(pub f64, pub f64, pub f64);
 
@@ -7,11 +9,13 @@ pub const BLUE: Color = Color(0.0, 0.0, 1.0);
 pub const WHITE: Color = Color(1.0, 1.0, 1.0);
 pub const BLACK: Color = Color(0.0, 0.0, 0.0);
 
-impl Color {
-    pub fn add(a: &Color, b: &Color) -> Color {
-        let mut r_sum = a.0 + b.0;
-        let mut g_sum = a.1 + b.1;
-        let mut b_sum = a.2 + b.2;
+impl Add for Color {
+    type Output = Color;
+
+    fn add(self, other: Color) -> Color {
+        let mut r_sum = self.0 + other.0;
+        let mut g_sum = self.1 + other.1;
+        let mut b_sum = self.2 + other.2;
 
         if r_sum > 1.0 {
             r_sum = 1.0;
@@ -27,13 +31,27 @@ impl Color {
 
         Color(r_sum, g_sum, b_sum)
     }
+}
 
+impl Mul for Color {
+    type Output = Color;
+
+    fn mul(self, other: Color) -> Color {
+        Color(self.0 * other.0, self.1 * other.1, self.2 * other.2)
+    }
+}
+
+impl Mul<f64> for Color {
+    type Output = Color;
+
+    fn mul(self, other: f64) -> Color {
+        Color(self.0 * other, self.1 * other, self.2 * other)
+    }
+}
+
+impl Color {
     pub fn intensity(&self) -> f64 {
         (self.0 + self.1 + self.2) / 3.0
-    }
-
-    pub fn scale(a: &Color, b: f64) -> Color {
-        Color(a.0 * b, a.1 * b, a.2 * b)
     }
 
     pub fn col_to_u8(self) -> (u8, u8, u8) {

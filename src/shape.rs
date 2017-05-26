@@ -11,8 +11,8 @@ pub struct Intersection {
 }
 
 pub trait Intersectable {
-    fn intersect_dist(&self, p0: &Vec3d, d: &Vec3d) -> Option<f64>;
-    fn intersect(&self, p0: &Vec3d, d: &Vec3d) -> Option<Intersection>;
+    fn intersect_dist(&self, p0: Vec3d, d: Vec3d) -> Option<f64>;
+    fn intersect(&self, p0: Vec3d, d: Vec3d) -> Option<Intersection>;
 }
 
 
@@ -41,14 +41,14 @@ impl Shape {
 }
 
 impl Intersectable for Shape {
-    fn intersect_dist(&self, p0: &Vec3d, d: &Vec3d) -> Option<f64> {
+    fn intersect_dist(&self, p0: Vec3d, d: Vec3d) -> Option<f64> {
         match *self {
             Shape::Sphere(ref s) => s.intersect_dist(p0, d),
             Shape::Plane(ref p) => p.intersect_dist(p0, d),
         }
     }
 
-    fn intersect(&self, p0: &Vec3d, d: &Vec3d) -> Option<Intersection> {
+    fn intersect(&self, p0: Vec3d, d: Vec3d) -> Option<Intersection> {
         match *self {
             Shape::Sphere(ref s) => s.intersect(p0, d),
             Shape::Plane(ref p) => p.intersect(p0, d),

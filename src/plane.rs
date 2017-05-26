@@ -38,9 +38,9 @@ impl Plane {
 }
 
 impl Intersectable for Plane {
-    fn intersect_dist(&self, p0: &Vec3d, d: &Vec3d) -> Option<f64> {
+    fn intersect_dist(&self, p0: Vec3d, d: Vec3d) -> Option<f64> {
         let neg_norm = self.normal * -1.0;
-        let denom = neg_norm.dot(*d);
+        let denom = neg_norm.dot(d);
         if denom > 1e-6 {
             let p0l0 = self.point - p0;
             let t = (p0l0.dot(neg_norm)) / denom;
@@ -50,9 +50,9 @@ impl Intersectable for Plane {
         }
     }
 
-    fn intersect(&self, p0: &Vec3d, d: &Vec3d) -> Option<Intersection> {
+    fn intersect(&self, p0: Vec3d, d: Vec3d) -> Option<Intersection> {
         let neg_norm = self.normal * -1.0;
-        let denom = neg_norm.dot(*d);
+        let denom = neg_norm.dot(d);
         if denom > 1e-6 {
             let p0l0 = self.point - p0;
             let t = (p0l0.dot(neg_norm)) / denom;

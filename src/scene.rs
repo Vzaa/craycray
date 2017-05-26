@@ -1,3 +1,5 @@
+use std::io;
+use std::iter::Map;
 use std::io::BufReader;
 use std::fs::File;
 
@@ -11,8 +13,6 @@ use light::*;
 use color;
 use color::Color;
 
-use std;
-
 #[derive(Serialize, Deserialize)]
 pub struct Scene {
     shapes: Vec<Shape>,
@@ -21,6 +21,12 @@ pub struct Scene {
     camera_dir: Vec3d,
     camera_up: Vec3d,
     max_reflection: i32,
+}
+
+#[derive(Debug)]
+pub enum CraycrayError {
+    Io(io::Error),
+    Serde(serde_json::Error),
 }
 
 impl Scene {
@@ -35,10 +41,10 @@ impl Scene {
         }
     }
 
-    pub fn from_file(filename: &str) -> Result<Scene, String> {
+    pub fn from_file(filename: &str) -> Result<Scene, CraycrayError> {
         File::open(filename)
-            .map_err(|e| format!("Can't open input file: {}", e))
-            .and_then(|f| serde_json::from_reader(BufReader::new(f)).map_err(|e| format!("JSON Parse error: {}", e)))
+            .map_err(CraycrayError::Io)
+            .and_then(|f| serde_json::from_reader(BufReader::new(f)).map_err(CraycrayError::Serde))
     }
 
     pub fn add_shape(&mut self, s: Shape) {
@@ -88,7 +94,7 @@ impl Scene {
     pub fn draw_iter_u8(&self,
                         h: usize,
                         v: usize)
-                        -> std::iter::Map<DrawIter, fn(Color) -> (u8, u8, u8)> {
+                        -> Map<DrawIter, fn(Color) -> (u8, u8, u8)> {
         self.draw_iter(h, v).map(Color::col_to_u8)
     }
 
@@ -102,7 +108,7 @@ impl Scene {
                         h: usize,
                         v: usize,
                         l: usize)
-                        -> std::iter::Map<LineIter, fn(Color) -> (u8, u8, u8)> {
+                        -> Map<LineIter, fn(Color) -> (u8, u8, u8)> {
         self.line_iter(h, v, l).map(Color::col_to_u8)
     }
 

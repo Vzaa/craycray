@@ -7,8 +7,9 @@ use serde_json;
 
 use cgmath::*;
 use shape::*;
-use vec3d::*;
-use light::*;
+use vec3d::Vec3d;
+use vec3d::Rotatable;
+use light::Light;
 
 use color;
 use color::Color;
@@ -64,7 +65,7 @@ impl Scene {
     }
 
     pub fn rot_camera(&mut self, x_rot: f64, y_rot: f64) {
-        self.camera_dir = vec3_roty(self.camera_dir, x_rot);
+        self.camera_dir = self.camera_dir.rot_x(x_rot);
 
         // project camera_dir to X plane
         let mut x_proj = self.camera_dir;
@@ -77,11 +78,7 @@ impl Scene {
             Vec3d::new(0.0, 0.0, 1.0).dot(x_proj).acos()
         };
 
-        self.camera_dir = vec3_roty(self.camera_dir, -angle);
-        self.camera_dir = vec3_rotx(self.camera_dir, y_rot);
-        self.camera_dir = vec3_roty(self.camera_dir, angle);
-
-        self.camera_dir = self.camera_dir.normalize();
+        self.camera_dir = self.camera_dir.rot_y(-angle).rot_x(y_rot).rot_y(angle).normalize();
     }
 
     /// Returns an iterator for a line at given resolution

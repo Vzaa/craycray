@@ -1,7 +1,6 @@
 #[macro_use]
 extern crate serde_derive;
 extern crate serde_json;
-//extern crate vecmath;
 extern crate cgmath;
 
 pub mod color;
@@ -10,5 +9,3 @@ pub mod light;
 pub mod scene;
 pub mod material;
 pub mod shape;
-pub mod sphere;
-pub mod plane;

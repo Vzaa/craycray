@@ -1,7 +1,10 @@
-use vec3d::*;
-use material::*;
-use sphere::Sphere;
-use plane::Plane;
+pub mod sphere;
+pub mod plane;
+
+use vec3d::Vec3d;
+use material::Material;
+use self::sphere::Sphere;
+use self::plane::Plane;
 use color::Color;
 
 pub struct Intersection {
@@ -14,7 +17,6 @@ pub trait Intersectable {
     fn intersect_dist(&self, p0: Vec3d, d: Vec3d) -> Option<f64>;
     fn intersect(&self, p0: Vec3d, d: Vec3d) -> Option<Intersection>;
 }
-
 
 #[derive(Serialize, Deserialize)]
 pub enum Shape {

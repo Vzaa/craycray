@@ -1,6 +1,6 @@
 use cgmath::*;
 use vec3d::*;
-use material::*;
+//use material::*;
 use shape::*;
 use color;
 use color::Color;

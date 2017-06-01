@@ -2,29 +2,34 @@ use cgmath::Vector3;
 
 pub type Vec3d = Vector3<f64>;
 
-#[inline(always)]
-pub fn vec3_rotx(a: Vec3d, angle: f64) -> Vec3d {
-    let x = a.x;
-    let y = (a.y * (angle).cos()) + (a.z * (-angle).sin());
-    let z = (a.y * (angle).sin()) + (a.z * (angle).cos());
-
-    Vec3d { x, y, z }
+pub trait Rotatable {
+    fn rot_x(self, angle: f64) -> Vec3d;
+    fn rot_y(self, angle: f64) -> Vec3d;
+    fn rot_z(self, angle: f64) -> Vec3d;
 }
 
-#[inline(always)]
-pub fn vec3_roty(a: Vec3d, angle: f64) -> Vec3d {
-    let x = (a.x * (angle).cos()) + (a.z * (angle).sin());
-    let y = a.y;
-    let z = (a.x * (-angle).sin()) + (a.z * (angle).cos());
+impl Rotatable for Vec3d {
+    fn rot_x(self, angle: f64) -> Vec3d {
+        let x = self.x;
+        let y = (self.y * (angle).cos()) + (self.z * (-angle).sin());
+        let z = (self.y * (angle).sin()) + (self.z * (angle).cos());
 
-    Vec3d { x, y, z }
-}
+        Vec3d { x, y, z }
+    }
 
-#[inline(always)]
-pub fn vec3_rotz(a: Vec3d, angle: f64) -> Vec3d {
-    let x = (a.x * (angle).cos()) + (a.y * (-angle).sin());
-    let y = (a.x * (angle).sin()) + (a.y * (angle).cos());
-    let z = a.z;
+    fn rot_y(self, angle: f64) -> Vec3d {
+        let x = (self.x * (angle).cos()) + (self.z * (angle).sin());
+        let y = self.y;
+        let z = (self.x * (-angle).sin()) + (self.z * (angle).cos());
 
-    Vec3d { x, y, z }
+        Vec3d { x, y, z }
+    }
+
+    fn rot_z(self, angle: f64) -> Vec3d {
+        let x = (self.x * (angle).cos()) + (self.y * (-angle).sin());
+        let y = (self.x * (angle).sin()) + (self.y * (angle).cos());
+        let z = self.z;
+
+        Vec3d { x, y, z }
+    }
 }

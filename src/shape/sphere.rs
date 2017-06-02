@@ -1,9 +1,6 @@
 use cgmath::*;
-use vec3d::*;
 use shape::*;
-use material::Material;
 use color;
-use color::Color;
 
 #[derive(Serialize, Deserialize)]
 pub struct Sphere {
@@ -77,18 +74,16 @@ impl Intersectable for Sphere {
             if r0 > 0.5 && r0 < r1 {
                 let q = p0 + d * r0;
                 let n = (q - self.center).normalize();
-                let mat = self.material;
                 Some(Intersection {
-                         material: mat,
+                         material: &self.material,
                          point: q,
                          normal: n,
                      })
             } else if r1 > 0.5 {
                 let q = p0 + d * r1;
                 let n = (q - self.center).normalize();
-                let mat = self.material;
                 Some(Intersection {
-                         material: mat,
+                         material: &self.material,
                          point: q,
                          normal: n,
                      })

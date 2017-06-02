@@ -7,8 +7,8 @@ use self::sphere::Sphere;
 use self::plane::Plane;
 use color::Color;
 
-pub struct Intersection {
-    pub material: Material, // This could be a reference?
+pub struct Intersection<'a> {
+    pub material: &'a Material,
     pub point: Vec3d,
     pub normal: Vec3d,
 }

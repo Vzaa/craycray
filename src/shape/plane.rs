@@ -1,9 +1,6 @@
 use cgmath::*;
-use vec3d::*;
-//use material::*;
 use shape::*;
 use color;
-use color::Color;
 
 #[derive(Serialize, Deserialize)]
 pub struct Plane {
@@ -61,7 +58,7 @@ impl Intersectable for Plane {
                 let q = p0 + dir_scaled;
 
                 Some(Intersection {
-                         material: self.material,
+                         material: &self.material,
                          point: q,
                          normal: self.normal,
                      })

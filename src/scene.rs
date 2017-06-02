@@ -108,14 +108,14 @@ impl Scene {
             let local = self.lights
                 .iter()
                 .map(|l| {
-                         let (f_unit, dist) = l.feeler(intersect.point);
-                         let direct_light = self.is_direct_light(intersect.point, f_unit, dist);
-                         if direct_light {
-                             phong(point, &intersect, l)
-                         } else {
-                             color::BLACK
-                         }
-                     })
+                    let (f_unit, dist) = l.feeler(intersect.point);
+                    let direct_light = self.is_direct_light(intersect.point, f_unit, dist);
+                    if direct_light {
+                        phong(point, &intersect, l)
+                    } else {
+                        color::BLACK
+                    }
+                })
                 .sum::<Color>() + intersect.material.ambient_color;
 
             let tmp = (intersect.point - point).normalize();

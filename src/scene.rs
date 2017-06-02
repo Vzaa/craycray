@@ -133,7 +133,7 @@ impl Scene {
     fn is_direct_light(&self, point: Vec3d, dir: Vec3d, dl: f64) -> bool {
         !self.shapes
              .iter()
-             .map(|&ref x| x.intersect_dist(point, dir))
+             .map(|x| x.intersect_dist(point, dir))
              .any(|dist_opt| dist_opt.map_or(false, |i| i < dl))
     }
 

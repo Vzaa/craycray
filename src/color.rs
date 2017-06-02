@@ -1,4 +1,5 @@
 use std::ops::{Add, Mul};
+use std::iter::Sum;
 
 #[derive(Copy, Clone, Serialize, Deserialize)]
 pub struct Color(pub f64, pub f64, pub f64);
@@ -56,5 +57,17 @@ impl Color {
 
     pub fn col_to_u8(self) -> (u8, u8, u8) {
         ((255.0 * self.0) as u8, (255.0 * self.1) as u8, (255.0 * self.2) as u8)
+    }
+}
+
+impl Sum for Color {
+    fn sum<I>(iter: I) -> Self
+        where I: Iterator<Item = Color>
+    {
+        let mut sum = Color(0.0, 0.0, 0.0);
+        for c in iter {
+            sum = sum + c;
+        }
+        sum
     }
 }

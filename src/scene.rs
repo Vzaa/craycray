@@ -17,7 +17,7 @@ use color::Color;
 #[derive(Serialize, Deserialize)]
 pub struct Scene {
     shapes: Vec<Shape>,
-    light: Light,
+    lights: Vec<Light>,
     camera_pos: Vec3d,
     camera_dir: Vec3d,
     camera_up: Vec3d,
@@ -31,10 +31,10 @@ pub enum CraycrayError {
 }
 
 impl Scene {
-    pub fn new(light: Light, camera_pos: Vec3d, camera_dir: Vec3d, camera_up: Vec3d) -> Scene {
+    pub fn new(camera_pos: Vec3d, camera_dir: Vec3d, camera_up: Vec3d) -> Scene {
         Scene {
             shapes: Vec::new(),
-            light: light,
+            lights: Vec::new(),
             camera_pos: camera_pos,
             camera_dir: camera_dir,
             camera_up: camera_up,
@@ -65,8 +65,6 @@ impl Scene {
     }
 
     pub fn rot_camera(&mut self, x_rot: f64, y_rot: f64) {
-        self.camera_dir = self.camera_dir.rot_x(x_rot);
-
         // project camera_dir to X plane
         let mut x_proj = self.camera_dir;
         x_proj.y = 0.0;
@@ -78,7 +76,12 @@ impl Scene {
             Vec3d::new(0.0, 0.0, 1.0).dot(x_proj).acos()
         };
 
-        self.camera_dir = self.camera_dir.rot_y(-angle).rot_x(y_rot).rot_y(angle).normalize();
+        self.camera_dir = self.camera_dir
+            .rot_y(x_rot)
+            .rot_y(-angle)
+            .rot_x(y_rot)
+            .rot_y(angle)
+            .normalize();
     }
 
     /// Returns an iterator for a line at given resolution
@@ -102,12 +105,14 @@ impl Scene {
         }
 
         if let Some(intersect) = self.closest_q(point, dir) {
-            let feeler_d = self.light.get_pos() - intersect.point;
-            let dist_light = feeler_d.magnitude();
-            let feeler_d_unit = feeler_d.normalize();
-            let direct_light = self.is_direct_light(intersect.point, feeler_d_unit, dist_light);
-
-            let local = phong(point, &intersect, &self.light, direct_light);
+            let local: Color = self.lights
+                .iter()
+                .map(|l| {
+                         let (f_unit, dist) = l.feeler(intersect.point);
+                         let direct_light = self.is_direct_light(intersect.point, f_unit, dist);
+                         phong(point, &intersect, l, direct_light)
+                     })
+                .sum();
 
             let tmp = (intersect.point - point).normalize();
             let reflection_dir = tmp - (intersect.normal * 2.0 * tmp.dot(intersect.normal));

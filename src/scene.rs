@@ -105,14 +105,14 @@ impl Scene {
         }
 
         if let Some(intersect) = self.closest_q(point, dir) {
-            let local: Color = self.lights
+            let local = self.lights
                 .iter()
-                .map(|l| {
+                .filter(|l| {
                          let (f_unit, dist) = l.feeler(intersect.point);
-                         let direct_light = self.is_direct_light(intersect.point, f_unit, dist);
-                         phong(point, &intersect, l, direct_light)
+                         self.is_direct_light(intersect.point, f_unit, dist)
                      })
-                .sum();
+                .map(|l| phong(point, &intersect, l))
+                .sum::<Color>() + intersect.material.ambient_color;
 
             let tmp = (intersect.point - point).normalize();
             let reflection_dir = tmp - (intersect.normal * 2.0 * tmp.dot(intersect.normal));
@@ -199,40 +199,30 @@ impl<'a> Iterator for LineIter<'a> {
 }
 
 // Calculate color with Phong model
-fn phong(view_point: Vec3d,
-         intersection: &Intersection,
-         light: &Light,
-         direct_light: bool)
-         -> Color {
+fn phong(view_point: Vec3d, intersection: &Intersection, light: &Light) -> Color {
     let point_material = intersection.material;
-    let ambient = point_material.ambient_color;
+    let light_pos = light.get_pos();
+    let light_color = light.get_color();
 
-    if direct_light {
-        let light_pos = light.get_pos();
-        let light_color = light.get_color();
+    let mut d = (light_pos - intersection.point)
+        .normalize()
+        .dot(intersection.normal);
 
-        let mut d = (light_pos - intersection.point)
-            .normalize()
-            .dot(intersection.normal);
-
-        if d < 0.0 {
-            d = 0.0;
-        }
-
-        let v = (view_point - intersection.point).normalize();
-        let lt = (light_pos - intersection.point).normalize();
-        let r = intersection.normal * (2.0 * intersection.normal.dot(lt)) - lt;
-
-        let mut s = r.dot(v).powf(point_material.shininess);
-        if s < 0.0 {
-            s = 0.0;
-        }
-
-        let diffuse = light_color * point_material.diffuse_color * d;
-        let specular = light_color * point_material.specular_color * s;
-
-        diffuse + specular + ambient
-    } else {
-        ambient
+    if d < 0.0 {
+        d = 0.0;
     }
+
+    let v = (view_point - intersection.point).normalize();
+    let lt = (light_pos - intersection.point).normalize();
+    let r = intersection.normal * (2.0 * intersection.normal.dot(lt)) - lt;
+
+    let mut s = r.dot(v).powf(point_material.shininess);
+    if s < 0.0 {
+        s = 0.0;
+    }
+
+    let diffuse = light_color * point_material.diffuse_color * d;
+    let specular = light_color * point_material.specular_color * s;
+
+    diffuse + specular
 }

@@ -62,7 +62,7 @@ impl Color {
 
 impl Sum for Color {
     fn sum<I>(iter: I) -> Self
-        where I: Iterator<Item = Color>
+        where I: Iterator<Item = Self>
     {
         let mut sum = Color(0.0, 0.0, 0.0);
         for c in iter {

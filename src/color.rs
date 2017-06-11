@@ -64,10 +64,6 @@ impl Sum for Color {
     fn sum<I>(iter: I) -> Self
         where I: Iterator<Item = Self>
     {
-        let mut sum = Color(0.0, 0.0, 0.0);
-        for c in iter {
-            sum = sum + c;
-        }
-        sum
+        iter.fold(Color(0.0, 0.0, 0.0), |s, c| s + c)
     }
 }

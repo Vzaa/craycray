@@ -14,23 +14,7 @@ impl Add for Color {
     type Output = Color;
 
     fn add(self, other: Color) -> Color {
-        let mut r_sum = self.0 + other.0;
-        let mut g_sum = self.1 + other.1;
-        let mut b_sum = self.2 + other.2;
-
-        if r_sum > 1.0 {
-            r_sum = 1.0;
-        }
-
-        if g_sum > 1.0 {
-            g_sum = 1.0;
-        }
-
-        if b_sum > 1.0 {
-            b_sum = 1.0;
-        }
-
-        Color(r_sum, g_sum, b_sum)
+        Color(self.0 + other.0, self.1 + other.1, self.2 + other.2)
     }
 }
 
@@ -50,12 +34,12 @@ impl Mul<f64> for Color {
     }
 }
 
-impl Color {
-    pub fn intensity(&self) -> f64 {
-        (self.0 + self.1 + self.2) / 3.0
-    }
+impl Into<(u8, u8, u8)> for Color {
+    fn into(mut self) -> (u8, u8, u8) {
+        if self.0 > 1.0 { self.0 = 1.0; }
+        if self.1 > 1.0 { self.1 = 1.0; }
+        if self.2 > 1.0 { self.2 = 1.0; }
 
-    pub fn col_to_u8(self) -> (u8, u8, u8) {
         ((255.0 * self.0) as u8, (255.0 * self.1) as u8, (255.0 * self.2) as u8)
     }
 }

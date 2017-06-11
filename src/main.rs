@@ -118,10 +118,11 @@ fn main() {
                     .enumerate()
                     .for_each(|(line_no, chunk)| {
                         for (idx, c) in scene
-                            .line_iter_u8(res_u, res_u, line_no).enumerate() {
-                                    chunk[idx * 3] = c.0;
-                                    chunk[idx * 3 + 1] = c.1;
-                                    chunk[idx * 3 + 2] = c.2;
+                            .line_iter(res_u, res_u, line_no).enumerate() {
+                                    let (r, g, b) = c.into();
+                                    chunk[idx * 3] = r;
+                                    chunk[idx * 3 + 1] = g;
+                                    chunk[idx * 3 + 2] = b;
                                 }
                     });
             })

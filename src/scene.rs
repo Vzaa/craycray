@@ -1,5 +1,4 @@
 use std::io;
-use std::iter::Map;
 use std::io::BufReader;
 use std::fs::File;
 
@@ -87,15 +86,6 @@ impl Scene {
     /// Returns an iterator for a line at given resolution
     pub fn line_iter(&self, h: usize, v: usize, l: usize) -> LineIter {
         LineIter::new(self, h, v, l)
-    }
-
-    /// line_iter converted to (u8, u8, u8)
-    pub fn line_iter_u8(&self,
-                        h: usize,
-                        v: usize,
-                        l: usize)
-                        -> Map<LineIter, fn(Color) -> (u8, u8, u8)> {
-        self.line_iter(h, v, l).map(Color::col_to_u8)
     }
 
     // Recursively trace lines

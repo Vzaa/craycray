@@ -88,35 +88,38 @@ impl Scene {
         LineIter::new(self, h, v, l)
     }
 
-    // Recursively trace lines
-    fn trace(&self, point: Vec3d, dir: Vec3d, depth: i32) -> Color {
-        if depth >= self.max_reflection {
-            return color::BLACK;
-        }
-
-        if let Some(intersect) = self.closest_q(point, dir) {
-            let local = self.lights
-                .iter()
-                .map(|l| {
-                    let (f_unit, dist) = l.feeler(intersect.point);
-                    let direct_light = self.is_direct_light(intersect.point, f_unit, dist);
-                    if direct_light {
-                        phong(point, &intersect, l)
-                    } else {
-                        color::BLACK
-                    }
-                })
+    // Iteratively trace lines
+    fn trace(&self, point: Vec3d, dir: Vec3d) -> Color {
+        let mut csum = color::BLACK;
+        let mut cpoint = point;
+        let mut cdir = dir;
+        let mut creflectivity = 1.0;
+        for _ in 0..self.max_reflection {
+            if let Some(intersect) = self.closest_q(cpoint, cdir) {
+                let local = self.lights
+                    .iter()
+                    .map(|l| {
+                        let (f_unit, dist) = l.feeler(intersect.point);
+                        let direct_light = self.is_direct_light(intersect.point, f_unit, dist);
+                        if direct_light {
+                            phong(point, &intersect, l)
+                        } else {
+                            color::BLACK
+                        }
+                    })
                 .sum::<Color>() + intersect.material.ambient_color;
+                csum = csum + (local * creflectivity);
 
-            let tmp = (intersect.point - point).normalize();
-            let reflection_dir = tmp - (intersect.normal * 2.0 * tmp.dot(intersect.normal));
+                let tmp = (intersect.point - point).normalize();
 
-            let reflected = self.trace(intersect.point, reflection_dir, depth + 1);
-
-            local + (reflected * intersect.material.reflectivity)
-        } else {
-            color::BLACK
+                cdir = tmp - (intersect.normal * 2.0 * tmp.dot(intersect.normal));
+                cpoint = intersect.point;
+                creflectivity = creflectivity * intersect.material.reflectivity;
+            } else {
+                break;
+            }
         }
+        csum
     }
 
     // Is there anything on the path to the light
@@ -185,7 +188,7 @@ impl<'a> Iterator for LineIter<'a> {
         self.point = self.point + self.right_step;
 
         let c = self.scene
-            .trace(self.scene.camera_pos, self.point.normalize(), 0);
+            .trace(self.scene.camera_pos, self.point.normalize());
 
         Some(c)
     }

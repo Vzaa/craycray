@@ -41,7 +41,11 @@ impl Intersectable for Plane {
         if denom > 1e-6 {
             let p0l0 = self.point - p0;
             let t = (p0l0.dot(neg_norm)) / denom;
-            if t >= 0.0 { Some(t) } else { None }
+            if t >= 0.0 {
+                Some(t)
+            } else {
+                None
+            }
         } else {
             None
         }
@@ -58,10 +62,10 @@ impl Intersectable for Plane {
                 let q = p0 + dir_scaled;
 
                 Some(Intersection {
-                         material: &self.material,
-                         point: q,
-                         normal: self.normal,
-                     })
+                    material: &self.material,
+                    point: q,
+                    normal: self.normal,
+                })
             } else {
                 None
             }

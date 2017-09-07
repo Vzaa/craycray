@@ -44,7 +44,9 @@ impl Scene {
     pub fn from_file(filename: &str) -> Result<Scene, CraycrayError> {
         File::open(filename)
             .map_err(CraycrayError::Io)
-            .and_then(|f| serde_json::from_reader(BufReader::new(f)).map_err(CraycrayError::Serde))
+            .and_then(|f| {
+                serde_json::from_reader(BufReader::new(f)).map_err(CraycrayError::Serde)
+            })
     }
 
     pub fn add_shape(&mut self, s: Shape) {
@@ -122,9 +124,9 @@ impl Scene {
     // Is there anything on the path to the light
     fn is_direct_light(&self, point: Vec3d, dir: Vec3d, dl: f64) -> bool {
         !self.shapes
-             .iter()
-             .map(|x| x.intersect_dist(point, dir))
-             .any(|dist_opt| dist_opt.map_or(false, |i| i < dl))
+            .iter()
+            .map(|x| x.intersect_dist(point, dir))
+            .any(|dist_opt| dist_opt.map_or(false, |i| i < dl))
     }
 
     // Checks against all objects and returns closest intersection

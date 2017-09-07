@@ -36,17 +36,28 @@ impl Mul<f64> for Color {
 
 impl Into<(u8, u8, u8)> for Color {
     fn into(mut self) -> (u8, u8, u8) {
-        if self.0 > 1.0 { self.0 = 1.0; }
-        if self.1 > 1.0 { self.1 = 1.0; }
-        if self.2 > 1.0 { self.2 = 1.0; }
+        if self.0 > 1.0 {
+            self.0 = 1.0;
+        }
+        if self.1 > 1.0 {
+            self.1 = 1.0;
+        }
+        if self.2 > 1.0 {
+            self.2 = 1.0;
+        }
 
-        ((255.0 * self.0) as u8, (255.0 * self.1) as u8, (255.0 * self.2) as u8)
+        (
+            (255.0 * self.0) as u8,
+            (255.0 * self.1) as u8,
+            (255.0 * self.2) as u8,
+        )
     }
 }
 
 impl Sum for Color {
     fn sum<I>(iter: I) -> Self
-        where I: Iterator<Item = Self>
+    where
+        I: Iterator<Item = Self>,
     {
         iter.fold(Color(0.0, 0.0, 0.0), |s, c| s + c)
     }

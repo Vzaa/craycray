@@ -75,18 +75,18 @@ impl Intersectable for Sphere {
                 let q = p0 + d * r0;
                 let n = (q - self.center).normalize();
                 Some(Intersection {
-                         material: &self.material,
-                         point: q,
-                         normal: n,
-                     })
+                    material: &self.material,
+                    point: q,
+                    normal: n,
+                })
             } else if r1 > 0.5 {
                 let q = p0 + d * r1;
                 let n = (q - self.center).normalize();
                 Some(Intersection {
-                         material: &self.material,
-                         point: q,
-                         normal: n,
-                     })
+                    material: &self.material,
+                    point: q,
+                    normal: n,
+                })
             } else {
                 None
             }

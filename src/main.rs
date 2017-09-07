@@ -1,8 +1,8 @@
 #[macro_use]
 extern crate clap;
-extern crate sdl2;
-extern crate rayon;
 extern crate craycray;
+extern crate rayon;
+extern crate sdl2;
 
 use std::time::Instant;
 
@@ -21,11 +21,20 @@ fn handle_events(scene: &mut Scene, event_pump: &mut EventPump) -> bool {
     for event in event_pump.poll_iter() {
         match event {
             Event::Quit { .. } |
-            Event::KeyDown { keycode: Some(Keycode::Escape), .. } => return true,
-            Event::KeyDown { keycode: Some(Keycode::W), .. } => {
+            Event::KeyDown {
+                keycode: Some(Keycode::Escape),
+                ..
+            } => return true,
+            Event::KeyDown {
+                keycode: Some(Keycode::W),
+                ..
+            } => {
                 scene.mv_camera_fwd();
             }
-            Event::KeyDown { keycode: Some(Keycode::S), .. } => {
+            Event::KeyDown {
+                keycode: Some(Keycode::S),
+                ..
+            } => {
                 scene.mv_camera_back();
             }
             _ => {}
@@ -103,7 +112,7 @@ fn main() {
         if frame_cnt == 10 {
             let elapsed = time_stamp.elapsed();
             let msecs = (u64::from(elapsed.as_secs()) * 1000) +
-                        (u64::from(elapsed.subsec_nanos()) / 1_000_000);
+                (u64::from(elapsed.subsec_nanos()) / 1_000_000);
             time_stamp = Instant::now();
             println!("FPS {}", (frame_cnt as f32) / (msecs as f32 / 1000.0));
             frame_cnt = 0;
@@ -114,17 +123,15 @@ fn main() {
         texture
             .with_lock(None, |buffer: &mut [u8], pitch: usize| {
                 let pchunks = buffer.par_chunks_mut(pitch);
-                pchunks
-                    .enumerate()
-                    .for_each(|(line_no, chunk)| {
-                        for (idx, c) in scene
-                            .line_iter(res_u, res_u, line_no).enumerate() {
-                                    let (r, g, b) = c.into();
-                                    chunk[idx * 3] = r;
-                                    chunk[idx * 3 + 1] = g;
-                                    chunk[idx * 3 + 2] = b;
-                                }
-                    });
+                pchunks.enumerate().for_each(|(line_no, chunk)| {
+                    let line_iter = scene.line_iter(res_u, res_u, line_no);
+                    for (idx, c) in line_iter.enumerate() {
+                        let (r, g, b) = c.into();
+                        chunk[idx * 3] = r;
+                        chunk[idx * 3 + 1] = g;
+                        chunk[idx * 3 + 2] = b;
+                    }
+                });
             })
             .unwrap();
         canvas.clear();

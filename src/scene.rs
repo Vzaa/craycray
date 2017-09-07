@@ -56,11 +56,11 @@ impl Scene {
     }
 
     pub fn mv_camera_fwd(&mut self) {
-        self.camera_pos = self.camera_pos + self.camera_dir;
+        self.camera_pos += self.camera_dir;
     }
 
     pub fn mv_camera_back(&mut self) {
-        self.camera_pos = self.camera_pos - self.camera_dir;
+        self.camera_pos -= self.camera_dir;
     }
 
     pub fn rot_camera(&mut self, x_rot: f64, y_rot: f64) {
@@ -162,7 +162,7 @@ impl<'a> LineIter<'a> {
         let right_step = left * (-2.0 / h as f64);
         let down_step = up * (-2.0 / v as f64);
 
-        point = point + down_step * (l as f64);
+        point += down_step * (l as f64);
         LineIter {
             h_res: h,
             x: 0,
@@ -182,7 +182,7 @@ impl<'a> Iterator for LineIter<'a> {
         }
         self.x += 1;
 
-        self.point = self.point + self.right_step;
+        self.point += self.right_step;
 
         let c = self.scene
             .trace(self.scene.camera_pos, self.point.normalize(), 0);

@@ -34,8 +34,8 @@ fn handle_events(scene: &mut Scene, event_pump: &mut EventPump) -> bool {
 
     let rel_mouse = event_pump.relative_mouse_state();
 
-    let x_rot = rel_mouse.x() as f64 * (0.010);
-    let y_rot = rel_mouse.y() as f64 * (0.010);
+    let x_rot = f64::from(rel_mouse.x()) * (0.010);
+    let y_rot = f64::from(rel_mouse.y()) as f64 * (0.010);
     scene.rot_camera(x_rot, y_rot);
     false
 }
@@ -102,8 +102,8 @@ fn main() {
 
         if frame_cnt == 10 {
             let elapsed = time_stamp.elapsed();
-            let msecs = (elapsed.as_secs() * 1000) as u64 +
-                        (elapsed.subsec_nanos() as u64 / 1000000);
+            let msecs = (u64::from(elapsed.as_secs()) * 1000) +
+                        (u64::from(elapsed.subsec_nanos()) / 1_000_000);
             time_stamp = Instant::now();
             println!("FPS {}", (frame_cnt as f32) / (msecs as f32 / 1000.0));
             frame_cnt = 0;

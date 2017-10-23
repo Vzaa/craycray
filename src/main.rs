@@ -16,6 +16,33 @@ use rayon::prelude::*;
 
 use craycray::scene::Scene;
 
+struct FpsCounter {
+    ts: Instant,
+    cnt: usize,
+    freq: usize,
+}
+
+impl FpsCounter {
+    pub fn new(freq: usize) -> Self {
+        let cnt = 0;
+        let ts = Instant::now();
+        FpsCounter { ts, cnt, freq }
+    }
+
+    pub fn update(&mut self) {
+        if self.cnt >= self.freq {
+            let elapsed = self.ts.elapsed();
+            let msecs = (u64::from(elapsed.as_secs()) * 1000) +
+                (u64::from(elapsed.subsec_nanos()) / 1_000_000);
+            self.ts = Instant::now();
+            eprintln!("FPS {}", (self.cnt as f32) / (msecs as f32 / 1000.0));
+            self.cnt = 0;
+        }
+
+        self.cnt += 1;
+    }
+}
+
 // Return true for quit
 fn handle_events(scene: &mut Scene, event_pump: &mut EventPump) -> bool {
     for event in event_pump.poll_iter() {
@@ -99,23 +126,12 @@ fn main() {
     sdl_context.mouse().set_relative_mouse_mode(true);
 
     let mut event_pump = sdl_context.event_pump().unwrap();
-
-    let mut frame_cnt: u32 = 0;
-    let mut time_stamp = Instant::now();
+    let mut fps = FpsCounter::new(10);
 
     loop {
         let quit = handle_events(&mut scene, &mut event_pump);
         if quit {
             break;
-        }
-
-        if frame_cnt == 10 {
-            let elapsed = time_stamp.elapsed();
-            let msecs = (u64::from(elapsed.as_secs()) * 1000) +
-                (u64::from(elapsed.subsec_nanos()) / 1_000_000);
-            time_stamp = Instant::now();
-            println!("FPS {}", (frame_cnt as f32) / (msecs as f32 / 1000.0));
-            frame_cnt = 0;
         }
 
         scene.step();
@@ -139,6 +155,7 @@ fn main() {
             .copy(&texture, None, Some(Rect::new(0, 0, window_h, window_h)))
             .unwrap();
         canvas.present();
-        frame_cnt += 1;
+
+        fps.update();
     }
 }

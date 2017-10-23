@@ -141,11 +141,11 @@ fn main() {
                 let pchunks = buffer.par_chunks_mut(pitch);
                 pchunks.enumerate().for_each(|(line_no, chunk)| {
                     let line_iter = scene.line_iter(res_u, res_u, line_no);
-                    for (idx, c) in line_iter.enumerate() {
+                    for (c, pix) in line_iter.zip(chunk.chunks_mut(3)) {
                         let (r, g, b) = c.into();
-                        chunk[idx * 3] = r;
-                        chunk[idx * 3 + 1] = g;
-                        chunk[idx * 3 + 2] = b;
+                        pix[0] = r;
+                        pix[1] = g;
+                        pix[2] = b;
                     }
                 });
             })
